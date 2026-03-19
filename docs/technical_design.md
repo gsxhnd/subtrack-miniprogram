@@ -74,7 +74,7 @@
 ## 2. 项目结构
 
 ```
-subtrack-miniprogram/
+miniprogram/
 ├── config/                     # Taro 配置文件
 ├── src/
 │   ├── api/                    # 外部 API 封装（汇率等）
