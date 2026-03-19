@@ -4,37 +4,48 @@
 
 ### 1.1 技术栈选型
 
+本项目采用**各平台原生开发**模式，当前优先实现微信小程序，后续根据需要扩展其他平台。
+
+#### 微信小程序技术栈
+
 | 层级 | 技术选型 | 说明 |
 |------|----------|------|
-| 前端框架 | Taro 3.x + Vue 3 | 多端统一框架，使用 Vue 3 Composition API |
-| UI组件库 | NutUI 4.x | 京东风格的 Vue3 组件库，支持 Taro |
-| 状态管理 | Pinia | Vue 3 官方推荐的状态管理库 |
+| 前端框架 | [weapp-vite](https://vite.icebreaker.top/) + Vue 3 | 现代化小程序工程化工具，基于 Vite + Vue 3 |
+| UI组件库 | Vant Weapp / 自定义组件 | 微信小程序原生组件库 |
+| 状态管理 | Wevu / Pinia | Vue 3 风格响应式状态管理 |
 | 数据存储 | 微信小程序本地存储 | 数据完全存储在本地，无需云端服务 |
-| 图表库 | ECharts for Taro | 数据可视化 |
+| 图表库 | ECharts for WeChat | 微信小程序图表组件 |
 
-### 1.2 多端策略
+### 1.2 多平台策略
 
 **当前阶段：** 仅实现微信小程序端
 
-**未来扩展：** 保留以下平台的扩展能力
+**项目结构设计：** 采用多平台独立目录结构，便于后续扩展
+
+```
+subtrack-miniprogram/
+├── wechat/                 # 微信小程序（当前开发）
+│   ├── src/
+│   ├── miniprogram/
+│   └── package.json
+├── alipay/                 # 支付宝小程序（未来扩展）
+├── h5/                     # H5 版本（未来扩展）
+└── docs/                   # 共享文档
+```
+
+**未来扩展平台：**
 
 | 平台 | 扩展优先级 | 说明 |
 |------|------------|------|
-| H5 | P1 | 浏览器访问，便于分享传播 |
-| 支付宝小程序 | P2 | 扩大用户覆盖 |
-| App (iOS/Android) | P3 | 原生体验，需要额外适配 |
-
-**多端适配注意事项：**
-- 使用 Taro 内置 API，避免平台特定 API
-- 样式使用 Taro 推荐的 CSS 单位（px 转 rpx）
-- 条件编译处理平台差异
-- 本地存储 API 各平台兼容
+| 支付宝小程序 | P1 | 扩大用户覆盖 |
+| H5 | P2 | 浏览器访问，便于分享传播 |
+| 抖音小程序 | P3 | 短视频平台用户覆盖 |
 
 ### 1.3 架构图
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                   Taro 多端客户端                        │
+│              微信小程序 (weapp-vite)                     │
 │  ┌─────────────────────────────────────────────────┐   │
 │  │              Vue 3 + Composition API             │   │
 │  │  ┌─────────┐  ┌─────────┐  ┌─────────┐         │   │
@@ -43,13 +54,13 @@
 │  │       └────────────┴────────────┘              │   │
 │  │                     │                          │   │
 │  │          ┌──────────▼──────────┐               │   │
-│  │          │   Pinia Store       │               │   │
+│  │          │   Wevu / Pinia      │               │   │
 │  │          │  (状态管理 + 持久化) │               │   │
 │  │          └──────────┬──────────┘               │   │
 │  │                     │                          │   │
 │  │          ┌──────────▼──────────┐               │   │
 │  │          │  本地存储 API       │               │   │
-│  │          │  (Taro.setStorage)  │               │   │
+│  │          │  (wx.setStorage)    │               │   │
 │  │          └─────────────────────┘               │   │
 │  └────────────────────────────────────────────────┘   │
 └───────────────────────────────────────────────────────┘
@@ -73,27 +84,87 @@
 
 ## 2. 项目结构
 
+### 2.1 整体项目结构
+
 ```
-miniprogram/
-├── config/                     # Taro 配置文件
+subtrack-miniprogram/
+├── wechat/                     # 微信小程序（当前开发）
+│   ├── src/
+│   │   ├── api/                # 外部 API 封装（汇率等）
+│   │   ├── assets/             # 静态资源
+│   │   ├── components/         # 公共组件
+│   │   ├── composables/        # 组合式函数 (Vue 3 Hooks)
+│   │   ├── models/             # 数据模型/类型定义
+│   │   ├── pages/              # 页面
+│   │   ├── store/              # Wevu / Pinia 状态管理
+│   │   ├── styles/             # 全局样式
+│   │   ├── utils/              # 工具函数
+│   │   │   ├── storage.ts      # 本地存储封装
+│   │   │   ├── import-export.ts # 导入导出工具
+│   │   │   └── billing.ts      # 扣款计算工具
+│   │   ├── app.vue             # 应用入口组件
+│   │   └── main.ts             # Vue 应用初始化
+│   ├── miniprogram/           # 小程序编译输出目录
+│   ├── project.config.json    # 微信小程序配置
+│   └── package.json
+├── alipay/                    # 支付宝小程序（未来扩展）
+├── h5/                        # H5 版本（未来扩展）
+├── docs/                      # 项目文档
+└── README.md
+```
+
+### 2.2 微信小程序详细结构
+
+```
+wechat/
 ├── src/
-│   ├── api/                    # 外部 API 封装（汇率等）
+│   ├── api/                    # 外部 API 封装
+│   │   └── exchange-rate.ts    # 汇率 API
 │   ├── assets/                 # 静态资源
+│   │   ├── icons/              # 图标资源
+│   │   └── images/             # 图片资源
 │   ├── components/             # 公共组件
-│   ├── composables/            # 组合式函数 (Vue 3 Hooks)
+│   │   ├── BudgetProgress/     # 预算进度组件
+│   │   ├── SubscriptionCard/   # 订阅卡片组件
+│   │   ├── AmountInput/        # 金额输入组件
+│   │   └── BillingDatePicker/  # 扣款日期选择组件
+│   ├── composables/            # 组合式函数
+│   │   ├── useSubscription.ts  # 订阅相关逻辑
+│   │   ├── useBudget.ts        # 预算相关逻辑
+│   │   └── useExchangeRate.ts  # 汇率相关逻辑
 │   ├── models/                 # 数据模型/类型定义
+│   │   ├── subscription.ts     # 订阅数据模型
+│   │   ├── user.ts             # 用户设置模型
+│   │   └── exchange-rate.ts    # 汇率模型
 │   ├── pages/                  # 页面
-│   ├── store/                  # Pinia 状态管理
+│   │   ├── index/              # 首页
+│   │   ├── subscription/       # 订阅列表
+│   │   ├── subscription-detail/# 订阅详情
+│   │   ├── subscription-edit/  # 订阅编辑
+│   │   ├── statistics/         # 统计页
+│   │   ├── settings/           # 设置页
+│   │   ├── exchange-rate/      # 汇率设置
+│   │   ├── export/             # 导出数据
+│   │   └── import/             # 导入数据
+│   ├── store/                  # 状态管理
+│   │   ├── index.ts            # Store 入口
+│   │   ├── subscription.ts     # 订阅 Store
+│   │   ├── user.ts             # 用户设置 Store
+│   │   └── exchange-rate.ts    # 汇率 Store
 │   ├── styles/                 # 全局样式
+│   │   ├── variables.scss      # 样式变量
+│   │   └── common.scss         # 公共样式
 │   ├── utils/                  # 工具函数
 │   │   ├── storage.ts          # 本地存储封装
 │   │   ├── import-export.ts    # 导入导出工具
-│   │   └── billing.ts          # 扣款计算工具
-│   ├── app.config.ts           # Taro 应用配置
+│   │   ├── billing.ts          # 扣款计算工具
+│   │   └── currency.ts         # 货币格式化工具
 │   ├── app.vue                 # 应用入口组件
+│   ├── app.json                # 小程序配置
 │   └── main.ts                 # Vue 应用初始化
-├── types/                      # 全局类型声明
-├── project.config.json         # 微信小程序配置
+├── miniprogram/               # 小程序编译输出目录
+├── project.config.json        # 微信小程序项目配置
+├── vite.config.ts             # Vite 配置
 └── package.json
 ```
 
@@ -153,7 +224,6 @@ export interface ExchangeRates {
 
 ```typescript
 // utils/storage.ts
-import Taro from '@tarojs/taro';
 
 export const STORAGE_KEYS = {
   SUBSCRIPTIONS: 'subtrack_subscriptions',
@@ -166,7 +236,7 @@ export const STORAGE_KEYS = {
 export const storage = {
   get: <T>(key: string): T | null => {
     try {
-      const data = Taro.getStorageSync(key);
+      const data = wx.getStorageSync(key);
       return data ? JSON.parse(data) : null;
     } catch {
       return null;
@@ -174,16 +244,16 @@ export const storage = {
   },
   
   set: <T>(key: string, value: T): void => {
-    Taro.setStorageSync(key, JSON.stringify(value));
+    wx.setStorageSync(key, JSON.stringify(value));
   },
   
   remove: (key: string): void => {
-    Taro.removeStorageSync(key);
+    wx.removeStorageSync(key);
   },
   
   clear: (): void => {
     Object.values(STORAGE_KEYS).forEach(key => {
-      Taro.removeStorageSync(key);
+      wx.removeStorageSync(key);
     });
   }
 };
@@ -202,24 +272,23 @@ export const storage = {
 | exchangeRates | subtrack_exchange_rates | 汇率缓存数据 |
 | exportHistory | subtrack_export_history | 导出历史记录 |
 
-### 4.2 Pinia 持久化
+### 4.2 状态持久化
 
-使用 `pinia-plugin-persistedstate` 实现状态持久化，支持 Taro 存储 API。
+使用 Wevu 或 Pinia 配合持久化插件实现状态持久化。
 
 ```typescript
 // store/index.ts
 import { createPinia } from 'pinia';
 import { createPersistedState } from 'pinia-plugin-persistedstate';
-import Taro from '@tarojs/taro';
 
 const pinia = createPinia();
 
 pinia.use(
   createPersistedState({
     storage: {
-      getItem: (key) => Taro.getStorageSync(key),
-      setItem: (key, value) => Taro.setStorageSync(key, value),
-      removeItem: (key) => Taro.removeStorageSync(key),
+      getItem: (key) => wx.getStorageSync(key),
+      setItem: (key, value) => wx.setStorageSync(key, value),
+      removeItem: (key) => wx.removeStorageSync(key),
     },
   })
 );

@@ -43,6 +43,8 @@
 | 导出数据 | /pages/export/index | 导出数据为 JSON |
 | 导入数据 | /pages/import/index | 从 JSON 导入数据 |
 
+**注意：** 以上路由为微信小程序页面路径，位于 `wechat/src/pages/` 目录下。
+
 ---
 
 ## 2. 首页设计
