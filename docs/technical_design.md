@@ -9,9 +9,7 @@
 | 前端框架 | Taro 3.x + Vue 3 | 多端统一框架，使用 Vue 3 Composition API |
 | UI组件库 | NutUI 4.x | 京东风格的 Vue3 组件库，支持 Taro |
 | 状态管理 | Pinia | Vue 3 官方推荐的状态管理库 |
-| 后端服务 | 腾讯云 CloudBase | 云开发平台，支持多端接入 |
-| 数据库 | CloudBase 数据库 | NoSQL 数据库 |
-| 云函数 | CloudBase 云函数 (Go) | 服务端逻辑，使用 Go 语言实现 |
+| 数据存储 | 微信小程序本地存储 | 数据完全存储在本地，无需云端服务 |
 | 图表库 | ECharts for Taro | 数据可视化 |
 
 ### 1.2 多端策略
@@ -30,7 +28,7 @@
 - 使用 Taro 内置 API，避免平台特定 API
 - 样式使用 Taro 推荐的 CSS 单位（px 转 rpx）
 - 条件编译处理平台差异
-- CloudBase SDK 支持多端
+- 本地存储 API 各平台兼容
 
 ### 1.3 架构图
 
@@ -46,24 +44,28 @@
 │  │                     │                          │   │
 │  │          ┌──────────▼──────────┐               │   │
 │  │          │   Pinia Store       │               │   │
+│  │          │  (状态管理 + 持久化) │               │   │
 │  │          └──────────┬──────────┘               │   │
 │  │                     │                          │   │
 │  │          ┌──────────▼──────────┐               │   │
-│  │          │  CloudBase SDK      │               │   │
-│  │          └──────────┬──────────┘               │   │
-│  └─────────────────────┼──────────────────────────┘   │
-└────────────────────────┼──────────────────────────────┘
+│  │          │  本地存储 API       │               │   │
+│  │          │  (Taro.setStorage)  │               │   │
+│  │          └─────────────────────┘               │   │
+│  └────────────────────────────────────────────────┘   │
+└───────────────────────────────────────────────────────┘
                          │
-┌────────────────────────▼──────────────────────────────┐
-│                腾讯云 CloudBase                        │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │
-│  │  云函数     │  │  云数据库   │  │  云存储     │   │
-│  │   (Go)      │  │             │  │             │   │
-│  │ - CRUD操作  │  │ - users     │  │ - 图标存储  │   │
-│  │ - 统计计算  │  │ - subscrip- │  │ - 导出文件  │   │
-│  │ - 消息推送  │  │   tions     │  │             │   │
-│  │ - 定时任务  │  │ - budgets   │  │             │   │
-│  └─────────────┘  └─────────────┘  └─────────────┘   │
+                         ▼
+┌───────────────────────────────────────────────────────┐
+│                   本地数据存储                         │
+│  ┌─────────────────────────────────────────────────┐  │
+│  │  - subscriptions: 订阅列表数据                   │  │
+│  │  - userSettings: 用户设置（预算、提醒等）        │  │
+│  │  - exchangeRates: 汇率缓存数据                   │  │
+│  │  - exportHistory: 导出历史记录                   │  │
+│  └─────────────────────────────────────────────────┘  │
+│                                                       │
+│  特点：完全本地运行，无需云端服务                     │
+│  支持：JSON 导入导出，数据备份与迁移                  │
 └───────────────────────────────────────────────────────┘
 ```
 
@@ -75,7 +77,7 @@
 subtrack-miniprogram/
 ├── config/                     # Taro 配置文件
 ├── src/
-│   ├── api/                    # API 接口封装
+│   ├── api/                    # 外部 API 封装（汇率等）
 │   ├── assets/                 # 静态资源
 │   ├── components/             # 公共组件
 │   ├── composables/            # 组合式函数 (Vue 3 Hooks)
@@ -84,211 +86,194 @@ subtrack-miniprogram/
 │   ├── store/                  # Pinia 状态管理
 │   ├── styles/                 # 全局样式
 │   ├── utils/                  # 工具函数
+│   │   ├── storage.ts          # 本地存储封装
+│   │   ├── import-export.ts    # 导入导出工具
+│   │   └── billing.ts          # 扣款计算工具
 │   ├── app.config.ts           # Taro 应用配置
 │   ├── app.vue                 # 应用入口组件
 │   └── main.ts                 # Vue 应用初始化
-├── cloudfunctions/             # CloudBase 云函数 (Go)
-│   ├── go.mod                  # Go 模块定义
-│   ├── main.go                 # 云函数入口
-│   ├── handler/                # 处理器
-│   ├── model/                  # 数据模型
-│   ├── service/                # 业务逻辑
-│   ├── repository/             # 数据访问层
-│   └── utils/                  # 工具函数
 ├── types/                      # 全局类型声明
 ├── project.config.json         # 微信小程序配置
-├── cloudbaserc.json            # CloudBase 配置
 └── package.json
 ```
 
 ---
 
-## 3. 云函数接口设计
+## 3. 数据模型设计
 
-### 3.1 架构模式
+### 3.1 TypeScript 类型定义
 
-采用**单函数多路由**模式，通过一个云函数入口，根据路由分发到不同的处理器。
-
-```
-客户端请求 ──► 云函数入口 ──► 路由分发 ──► Handler ──► Service ──► Repository ──► 数据库
-                main.go       router        handler      service      repository
-```
-
-### 3.2 Go 数据模型定义
-
-```go
-// model/subscription.go
-type Subscription struct {
-    ID              string    `json:"_id" bson:"_id"`
-    UserID          string    `json:"userId" bson:"userId"`
-    Name            string    `json:"name" bson:"name"`
-    Amount          int64     `json:"amount" bson:"amount"`           // 单位：分
-    Currency        string    `json:"currency" bson:"currency"`       // CNY, USD, EUR 等
-    BillingCycle    string    `json:"billingCycle" bson:"billingCycle"` // monthly, quarterly, yearly
-    BillingDay      int       `json:"billingDay" bson:"billingDay"`   // 扣款日 1-31
-    BillingMonth    *int      `json:"billingMonth,omitempty" bson:"billingMonth,omitempty"` // 年付时的月份
-    StartDate       time.Time `json:"startDate" bson:"startDate"`
-    NextBillingDate time.Time `json:"nextBillingDate" bson:"nextBillingDate"`
-    Remark          string    `json:"remark,omitempty" bson:"remark"`
-    Status          string    `json:"status" bson:"status"`           // active, cancelled
-    CancelledAt     *time.Time `json:"cancelledAt,omitempty" bson:"cancelledAt"`
-    Icon            string    `json:"icon,omitempty" bson:"icon"`
-    Category        string    `json:"category,omitempty" bson:"category"`
-    CreatedAt       time.Time `json:"createdAt" bson:"createdAt"`
-    UpdatedAt       time.Time `json:"updatedAt" bson:"updatedAt"`
+```typescript
+// models/subscription.ts
+export interface Subscription {
+  id: string;
+  name: string;
+  amount: number;           // 单位：分
+  currency: Currency;
+  billingCycle: BillingCycle;
+  billingDay: number;       // 扣款日 1-31
+  billingMonth?: number;    // 年付时的月份 1-12
+  startDate: string;
+  nextBillingDate: string;
+  remark?: string;
+  status: SubscriptionStatus;
+  cancelledAt?: string;
+  icon?: string;
+  category?: string;
+  createdAt: string;
+  updatedAt: string;
 }
+
+export type Currency = 'CNY' | 'USD' | 'EUR' | 'GBP' | 'JPY' | 'HKD' | 'TWD';
+export type BillingCycle = 'monthly' | 'quarterly' | 'yearly';
+export type SubscriptionStatus = 'active' | 'cancelled';
 ```
 
-```go
-// model/user.go
-type User struct {
-    ID              string    `json:"_id" bson:"_id"`
-    OpenID          string    `json:"openid" bson:"openid"`
-    Nickname        string    `json:"nickname,omitempty" bson:"nickname"`
-    Avatar          string    `json:"avatar,omitempty" bson:"avatar"`
-    MonthlyBudget   int64     `json:"monthlyBudget" bson:"monthlyBudget"`
-    BudgetCurrency  string    `json:"budgetCurrency" bson:"budgetCurrency"`
-    ReminderEnabled bool      `json:"reminderEnabled" bson:"reminderEnabled"`
-    ReminderDays    int       `json:"reminderDays" bson:"reminderDays"`
-    CreatedAt       time.Time `json:"createdAt" bson:"createdAt"`
-    UpdatedAt       time.Time `json:"updatedAt" bson:"updatedAt"`
+```typescript
+// models/user.ts
+export interface UserSettings {
+  monthlyBudget: number;      // 单位：分
+  budgetCurrency: Currency;
+  reminderEnabled: boolean;
+  reminderDays: number;       // 提前提醒天数
+  baseCurrency: Currency;     // 基准货币
 }
 ```
 
-```go
-// model/common.go
-type Response struct {
-    Code    int         `json:"code"`
-    Message string      `json:"message"`
-    Data    interface{} `json:"data,omitempty"`
+```typescript
+// models/exchange-rate.ts
+export interface ExchangeRates {
+  base: Currency;
+  rates: Record<Currency, number>;
+  updatedAt: string;
 }
 ```
 
-### 3.3 API 接口定义
+### 3.2 本地存储结构
 
-#### 订阅管理
+```typescript
+// utils/storage.ts
+import Taro from '@tarojs/taro';
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | /subscription | 获取订阅列表 |
-| POST | /subscription | 创建/更新订阅 |
-| DELETE | /subscription?id={id} | 删除订阅 |
+export const STORAGE_KEYS = {
+  SUBSCRIPTIONS: 'subtrack_subscriptions',
+  USER_SETTINGS: 'subtrack_user_settings',
+  EXCHANGE_RATES: 'subtrack_exchange_rates',
+  EXPORT_HISTORY: 'subtrack_export_history',
+} as const;
 
-#### 统计分析
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | /statistics?type={type} | 获取统计数据 |
-
-#### 用户管理
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | /user | 获取用户信息 |
-| POST | /user | 更新用户信息 |
-
-#### 汇率
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | /exchange-rate | 获取汇率数据 |
-
-### 3.4 请求/响应结构体
-
-```go
-// 获取订阅列表
-type GetSubscriptionsRequest struct {
-    Status    string `json:"status"`
-    SortBy    string `json:"sortBy"`
-    SortOrder string `json:"sortOrder"`
-    Page      int    `json:"page"`
-    PageSize  int    `json:"pageSize"`
-}
-
-type GetSubscriptionsResponse struct {
-    Subscriptions []Subscription `json:"subscriptions"`
-    Total         int64          `json:"total"`
-}
-
-// 保存订阅
-type SaveSubscriptionRequest struct {
-    ID           string `json:"id"`
-    Name         string `json:"name"`
-    Amount       int64  `json:"amount"`
-    Currency     string `json:"currency"`
-    BillingCycle string `json:"billingCycle"`
-    BillingDay   int    `json:"billingDay"`
-    BillingMonth *int   `json:"billingMonth"`
-    StartDate    string `json:"startDate"`
-    Remark       string `json:"remark"`
-    Category     string `json:"category"`
-    Icon         string `json:"icon"`
-}
-
-// 获取统计
-type GetStatisticsRequest struct {
-    Type           string `json:"type"`           // monthly, category, trend
-    StartDate      string `json:"startDate"`
-    EndDate        string `json:"endDate"`
-    TargetCurrency string `json:"targetCurrency"`
-}
+// 存储操作封装
+export const storage = {
+  get: <T>(key: string): T | null => {
+    try {
+      const data = Taro.getStorageSync(key);
+      return data ? JSON.parse(data) : null;
+    } catch {
+      return null;
+    }
+  },
+  
+  set: <T>(key: string, value: T): void => {
+    Taro.setStorageSync(key, JSON.stringify(value));
+  },
+  
+  remove: (key: string): void => {
+    Taro.removeStorageSync(key);
+  },
+  
+  clear: (): void => {
+    Object.values(STORAGE_KEYS).forEach(key => {
+      Taro.removeStorageSync(key);
+    });
+  }
+};
 ```
 
 ---
 
-## 4. 本地数据缓存策略
+## 4. 本地存储策略
 
-### 4.1 缓存配置
+### 4.1 存储配置
 
-| 缓存项 | 过期时间 | 说明 |
-|--------|----------|------|
-| subscriptions | 5分钟 | 订阅列表数据 |
-| statistics | 5分钟 | 统计数据 |
-| exchangeRates | 1小时 | 汇率数据 |
-| userInfo | 24小时 | 用户信息 |
-| userSettings | 7天 | 用户设置 |
+| 存储项 | 存储键 | 说明 |
+|--------|--------|------|
+| subscriptions | subtrack_subscriptions | 订阅列表数据 |
+| userSettings | subtrack_user_settings | 用户设置（预算、提醒等） |
+| exchangeRates | subtrack_exchange_rates | 汇率缓存数据 |
+| exportHistory | subtrack_export_history | 导出历史记录 |
 
 ### 4.2 Pinia 持久化
 
 使用 `pinia-plugin-persistedstate` 实现状态持久化，支持 Taro 存储 API。
 
----
+```typescript
+// store/index.ts
+import { createPinia } from 'pinia';
+import { createPersistedState } from 'pinia-plugin-persistedstate';
+import Taro from '@tarojs/taro';
 
-## 5. 数据库设计
+const pinia = createPinia();
 
-### 5.1 数据库集合
-
-| 集合名 | 说明 | 权限规则 |
-|--------|------|----------|
-| users | 用户信息 | 仅创建者可读写 |
-| subscriptions | 订阅记录 | 仅创建者可读写 |
-| monthly_budgets | 月度预算 | 仅创建者可读写 |
-| subscription_history | 订阅状态变更历史 | 仅创建者可读写 |
-| exchange_rates | 汇率缓存 | 所有用户可读 |
-
-### 5.2 数据库安全规则
-
-```json
-// users 集合规则
-{ "read": "auth.uid == doc._id", "write": "auth.uid == doc._id" }
-
-// subscriptions 集合规则
-{ "read": "auth.uid == doc.userId", "write": "auth.uid == doc.userId" }
-
-// monthly_budgets 集合规则
-{ "read": "auth.uid == doc.userId", "write": "auth.uid == doc.userId" }
-
-// exchange_rates 集合规则（公开只读）
-{ "read": true, "write": "auth.uid != null && doc.updatedBy == auth.uid" }
+pinia.use(
+  createPersistedState({
+    storage: {
+      getItem: (key) => Taro.getStorageSync(key),
+      setItem: (key, value) => Taro.setStorageSync(key, value),
+      removeItem: (key) => Taro.removeStorageSync(key),
+    },
+  })
+);
 ```
 
-### 5.3 索引设计
+### 4.3 数据同步策略
 
-| 集合 | 索引名 | 字段 |
-|------|--------|------|
-| subscriptions | userId_status_nextBillingDate | `{ userId: 1, status: 1, nextBillingDate: 1 }` |
-| monthly_budgets | userId_year_month | `{ userId: 1, year: 1, month: 1 }` (unique) |
-| subscription_history | userId_subscriptionId_createdAt | `{ userId: 1, subscriptionId: 1, createdAt: -1 }` |
+- 所有数据变更即时写入本地存储
+- 使用 Pinia store 作为内存缓存
+- 页面加载时从本地存储恢复数据
+- 支持手动导出备份
+
+---
+
+## 5. 本地数据结构
+
+### 5.1 订阅数据结构
+
+```typescript
+// 存储在 subtrack_subscriptions 键下
+interface SubscriptionStorage {
+  version: string;
+  data: Subscription[];
+  lastUpdated: string;
+}
+```
+
+### 5.2 用户设置数据结构
+
+```typescript
+// 存储在 subtrack_user_settings 键下
+interface UserSettingsStorage {
+  version: string;
+  data: UserSettings;
+  lastUpdated: string;
+}
+```
+
+### 5.3 汇率数据结构
+
+```typescript
+// 存储在 subtrack_exchange_rates 键下
+interface ExchangeRatesStorage {
+  version: string;
+  data: ExchangeRates;
+  lastUpdated: string;
+}
+```
+
+### 5.4 数据版本管理
+
+- 每个存储项包含 `version` 字段用于数据迁移
+- 版本升级时自动执行迁移脚本
+- 保持向后兼容性
 
 ---
 
@@ -308,9 +293,41 @@ type GetStatisticsRequest struct {
 
 ### 6.2 汇率处理
 
-- 使用定时任务每日更新汇率
-- 汇率数据缓存到云数据库
-- 支持用户设置基准货币（默认 CNY）
+**用户手动输入汇率模式：**
+
+- 用户在设置页面手动输入各货币相对于基准货币的汇率
+- 支持保存多个常用汇率
+- 用户可随时更新汇率值
+- 无需网络请求，完全离线可用
+
+### 6.3 汇率设置数据结构
+
+```typescript
+// models/exchange-rate.ts
+export interface UserExchangeRate {
+  fromCurrency: Currency;
+  toCurrency: Currency;    // 通常为基准货币
+  rate: number;            // 汇率值，如 7.2 表示 1 USD = 7.2 CNY
+  updatedAt: string;
+}
+
+// 存储在 subtrack_user_settings 中
+interface ExchangeRateSettings {
+  baseCurrency: Currency;  // 基准货币
+  rates: UserExchangeRate[];
+}
+```
+
+### 6.4 汇率设置界面
+
+用户可在设置页面管理汇率：
+
+| 操作 | 说明 |
+|------|------|
+| 设置基准货币 | 选择统计时的基准货币 |
+| 添加汇率 | 为新货币设置汇率 |
+| 编辑汇率 | 修改已有货币的汇率 |
+| 删除汇率 | 移除不需要的汇率 |
 
 ---
 
@@ -353,26 +370,158 @@ type GetStatisticsRequest struct {
 
 ---
 
-## 9. 定时任务设计
+## 9. 续费提醒设计
 
-### 9.1 定时触发器配置
+### 9.1 提醒机制
 
-| 触发器 | Cron 表达式 | 说明 |
-|--------|-------------|------|
-| 续费提醒 | `0 0 9 * * * *` | 每天早上9点执行 |
-| 更新汇率 | `0 0 0 * * * *` | 每天凌晨执行 |
+采用本地提醒机制，无需云端服务：
+
+| 提醒类型 | 实现方式 | 说明 |
+|----------|----------|------|
+| 小程序内提醒 | 页面加载时检查 | 打开小程序时显示即将续费提示 |
+| 订阅消息 | 微信小程序订阅消息 | 需用户授权，通过微信服务发送 |
 
 ### 9.2 续费提醒逻辑
 
 - 提前 1、3、7 天发送提醒
 - 检查用户是否开启提醒
-- 调用微信小程序订阅消息 API
+- 小程序内展示即将续费列表
+- 调用微信小程序订阅消息 API（需用户主动触发授权）
+
+### 9.3 提醒检查流程
+
+```
+用户打开小程序
+    │
+    ▼
+加载本地订阅数据
+    │
+    ▼
+计算即将续费的订阅（7天内）
+    │
+    ▼
+首页显示提醒卡片
+```
 
 ---
 
-## 10. 性能优化策略
+## 10. 本地数据导入导出
 
-### 10.1 数据加载优化
+### 10.1 功能概述
+
+支持通过 JSON 文件导入导出订阅数据，实现本地数据备份与迁移，无需依赖云端服务。
+
+### 10.2 导出功能
+
+#### 导出数据格式
+
+```json
+{
+  "version": "1.0.0",
+  "exportTime": "2026-03-19T10:30:00Z",
+  "data": {
+    "user": {
+      "monthlyBudget": 50000,
+      "budgetCurrency": "CNY",
+      "reminderEnabled": true,
+      "reminderDays": 3
+    },
+    "subscriptions": [
+      {
+        "id": "sub_001",
+        "name": "ChatGPT Plus",
+        "amount": 2000,
+        "currency": "USD",
+        "billingCycle": "monthly",
+        "billingDay": 15,
+        "startDate": "2024-01-15",
+        "nextBillingDate": "2026-04-15",
+        "remark": "个人使用",
+        "status": "active",
+        "category": "AI工具",
+        "icon": "chatgpt"
+      }
+    ]
+  }
+}
+```
+
+#### 导出流程
+
+1. 用户进入设置页面，点击"导出数据"
+2. 前端收集本地存储的所有订阅数据
+3. 生成符合格式的 JSON 数据
+4. 调用微信小程序文件 API 保存到本地或分享
+
+#### 导出选项
+
+| 选项 | 说明 | 默认值 |
+|------|------|--------|
+| 包含已取消订阅 | 是否导出 cancelled 状态的订阅 | true |
+| 包含历史记录 | 是否导出订阅变更历史 | false |
+
+### 10.3 导入功能
+
+#### 导入流程
+
+1. 用户进入设置页面，点击"导入数据"
+2. 选择本地 JSON 文件
+3. 前端解析并验证数据格式
+4. 显示数据预览（订阅数量、预算设置等）
+5. 用户确认后合并或替换现有数据
+
+#### 数据验证规则
+
+| 验证项 | 规则 | 错误处理 |
+|--------|------|----------|
+| 版本兼容性 | 检查 version 字段 | 不兼容版本提示升级 |
+| 必填字段 | 检查 subscription 必填字段 | 跳过无效记录，记录错误 |
+| 数据类型 | 验证字段类型 | 类型转换或报错 |
+| 重复数据 | 检测同名订阅 | 提示用户选择合并/跳过/替换 |
+
+#### 导入模式
+
+| 模式 | 说明 | 适用场景 |
+|------|------|----------|
+| 完全替换 | 清空现有数据，使用导入数据 | 恢复备份 |
+| 智能合并 | 保留现有数据，合并新数据 | 迁移数据 |
+| 仅导入订阅 | 只导入订阅，保留用户设置 | 部分恢复 |
+
+### 10.4 本地存储架构
+
+#### 存储方案
+
+使用微信小程序本地存储 API，数据完全存储在设备本地：
+
+```typescript
+// 存储键名定义
+const STORAGE_KEYS = {
+  SUBSCRIPTIONS: 'subtrack_subscriptions',
+  USER_SETTINGS: 'subtrack_user_settings',
+  EXCHANGE_RATES: 'subtrack_exchange_rates',
+  EXPORT_HISTORY: 'subtrack_export_history'
+};
+```
+
+#### 数据持久化
+
+- 使用 `wx.setStorageSync` 进行同步存储
+- 单条数据大小限制：1MB
+- 总存储空间限制：10MB
+- 定期自动备份到本地缓存
+
+### 10.5 安全与隐私
+
+- 导出的 JSON 文件不包含敏感信息（如 OpenID）
+- 建议用户妥善保管导出文件
+- 导入时进行数据完整性校验
+- 支持设置导出文件密码（可选功能）
+
+---
+
+## 11. 性能优化策略
+
+### 11.1 数据加载优化
 
 - 分页加载订阅列表（虚拟列表）
 - 按需加载统计数据
@@ -380,19 +529,19 @@ type GetStatisticsRequest struct {
 - 骨架屏占位
 - 预加载关键数据
 
-### 10.2 Vue 3 性能优化
+### 11.2 Vue 3 性能优化
 
 - 使用 `shallowRef` 减少响应式开销
 - 使用 `computed` 缓存计算结果
 - 使用 `v-memo` 优化列表渲染
 
-### 10.3 CloudBase 优化
+### 11.3 本地存储优化
 
-- 云函数冷启动优化（定时预热）
-- 数据库查询优化（索引、限制字段、分页）
-- 批量操作减少调用次数
+- 大数据分片存储
+- 读写操作批量处理
+- 定期清理过期缓存
 
-### 10.4 小程序分包优化
+### 11.4 小程序分包优化
 
 | 分包 | 包含页面 |
 |------|----------|
