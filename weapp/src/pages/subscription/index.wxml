@@ -19,6 +19,21 @@
     </view>
   </view>
 
+  <!-- 排序和筛选工具栏 -->
+  <view wx:if="{{currentTab === 'active'}}" class="toolbar">
+    <view class="toolbar__btn" bindtap="showSortOptions">
+      <text class="toolbar__icon">⇅</text>
+      <text class="toolbar__text">{{sortType === 'date' ? '按日期' : sortType === 'amount' ? '按金额' : '按名称'}}</text>
+      <text class="toolbar__arrow">▼</text>
+    </view>
+    <view class="toolbar__btn" bindtap="showFilterOptions">
+      <text class="toolbar__icon">◉</text>
+      <text class="toolbar__text">筛选</text>
+      <text wx:if="{{filterCurrency !== 'all' || filterCategory !== 'all'}}" class="toolbar__badge">•</text>
+      <text class="toolbar__arrow">▼</text>
+    </view>
+  </view>
+
   <!-- 订阅列表 -->
   <view class="list">
     <block wx:if="{{currentTab === 'active'}}">
@@ -50,5 +65,95 @@
   <!-- 添加按钮 -->
   <view wx:if="{{currentTab === 'active'}}" class="fab" bindtap="goToAdd">
     <text class="fab__icon">+</text>
+  </view>
+
+  <!-- 排序选择弹窗 -->
+  <view wx:if="{{showSortPicker}}" class="picker-overlay" bindtap="closeSortPicker">
+    <view class="picker picker--bottom" catchtap="">
+      <view class="picker__header">
+        <text class="picker__title">排序方式</text>
+        <view class="picker__close" bindtap="closeSortPicker">✕</view>
+      </view>
+      <view class="picker__list">
+        <view
+          class="picker__item {{sortType === 'date' ? 'picker__item--active' : ''}}"
+          data-type="date"
+          bindtap="onSortTypeChange"
+        >
+          <text class="picker__item-label">按扣款日期</text>
+          <text wx:if="{{sortType === 'date'}}" class="picker__item-order">{{sortOrder === 'asc' ? '↑' : '↓'}}</text>
+        </view>
+        <view
+          class="picker__item {{sortType === 'amount' ? 'picker__item--active' : ''}}"
+          data-type="amount"
+          bindtap="onSortTypeChange"
+        >
+          <text class="picker__item-label">按金额</text>
+          <text wx:if="{{sortType === 'amount'}}" class="picker__item-order">{{sortOrder === 'asc' ? '↑' : '↓'}}</text>
+        </view>
+        <view
+          class="picker__item {{sortType === 'name' ? 'picker__item--active' : ''}}"
+          data-type="name"
+          bindtap="onSortTypeChange"
+        >
+          <text class="picker__item-label">按名称</text>
+          <text wx:if="{{sortType === 'name'}}" class="picker__item-order">{{sortOrder === 'asc' ? '↑' : '↓'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选选择弹窗 -->
+  <view wx:if="{{showFilterPicker}}" class="picker-overlay" bindtap="closeFilterPicker">
+    <view class="picker picker--bottom" catchtap="">
+      <view class="picker__header">
+        <text class="picker__title">筛选</text>
+        <view class="picker__close" bindtap="closeFilterPicker">✕</view>
+      </view>
+
+      <!-- 货币筛选 -->
+      <view class="filter-section">
+        <text class="filter-section__title">货币</text>
+        <view class="filter-section__options">
+          <view
+            wx:for="{{currencyOptions}}"
+            wx:key="value"
+            class="filter-chip {{filterCurrency === item.value ? 'filter-chip--active' : ''}}"
+            data-currency="{{item.value}}"
+            bindtap="onFilterCurrencyChange"
+          >
+            <text>{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 分类筛选 -->
+      <view wx:if="{{categories.length > 0}}" class="filter-section">
+        <text class="filter-section__title">分类</text>
+        <view class="filter-section__options">
+          <view
+            class="filter-chip {{filterCategory === 'all' ? 'filter-chip--active' : ''}}"
+            data-category="all"
+            bindtap="onFilterCategoryChange"
+          >
+            <text>全部分类</text>
+          </view>
+          <view
+            wx:for="{{categories}}"
+            wx:key="*this"
+            class="filter-chip {{filterCategory === item ? 'filter-chip--active' : ''}}"
+            data-category="{{item}}"
+            bindtap="onFilterCategoryChange"
+          >
+            <text>{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 重置按钮 -->
+      <view class="filter-actions">
+        <view class="filter-actions__reset" bindtap="resetFilter">重置筛选</view>
+      </view>
+    </view>
   </view>
 </view>

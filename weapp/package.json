@@ -27,5 +27,8 @@
     "sass": "^1.98.0",
     "typescript": "^5.9.3",
     "weapp-vite": "^6.11.3"
+  },
+  "dependencies": {
+    "echarts-for-weixin": "^1.0.2"
   }
 }

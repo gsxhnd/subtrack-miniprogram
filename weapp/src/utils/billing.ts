@@ -174,3 +174,108 @@ export function getUpcomingRenewals(
         new Date(b.nextBillingDate).getTime(),
     )
 }
+
+/**
+ * 计算年度费用（单位：分）
+ */
+export function calculateYearlyAmount(subscription: Subscription): number {
+  const { amount, billingRule } = subscription
+
+  switch (billingRule.cycle) {
+    case 'monthly':
+      return amount * 12
+    case 'quarterly':
+      return amount * 4
+    case 'yearly':
+      return amount
+  }
+}
+
+/**
+ * 获取本月所有订阅的月均费用汇总
+ */
+export function getMonthlySummary(
+  subscriptions: Subscription[],
+): {
+  totalMonthly: number
+  totalYearly: number
+  byCurrency: Map<string, { monthly: number; yearly: number; count: number }>
+} {
+  const byCurrency = new Map<string, { monthly: number; yearly: number; count: number }>()
+  let totalMonthly = 0
+  let totalYearly = 0
+
+  for (const sub of subscriptions) {
+    if (sub.status !== 'active') continue
+
+    const monthly = calculateMonthlyAmount(sub)
+    const yearly = calculateYearlyAmount(sub)
+
+    totalMonthly += monthly
+    totalYearly += yearly
+
+    const currency = sub.currency
+    const existing = byCurrency.get(currency) || { monthly: 0, yearly: 0, count: 0 }
+    byCurrency.set(currency, {
+      monthly: existing.monthly + monthly,
+      yearly: existing.yearly + yearly,
+      count: existing.count + 1,
+    })
+  }
+
+  return { totalMonthly, totalYearly, byCurrency }
+}
+
+/**
+ * 获取指定年份的月度支出数据（用于趋势图）
+ */
+export function getMonthlySpendingByYear(
+  subscriptions: Subscription[],
+  year: number,
+): Array<{ month: number; amount: number; count: number }> {
+  const result: Array<{ month: number; amount: number; count: number }> = []
+
+  for (let month = 0; month < 12; month++) {
+    let monthAmount = 0
+    let count = 0
+
+    for (const sub of subscriptions) {
+      if (sub.status !== 'active') continue
+
+      // 检查该订阅在该月是否有扣款
+      const start = new Date(sub.startDate)
+      const targetMonth = new Date(year, month, 1)
+
+      if (start > targetMonth) continue
+
+      const { billingRule, amount } = sub
+
+      switch (billingRule.cycle) {
+        case 'monthly':
+          monthAmount += amount
+          count++
+          break
+        case 'quarterly':
+          // 检查是否是该季度的扣款月
+          const startMonth = start.getMonth()
+          const monthDiff = (month - startMonth + 12) % 12
+          if (monthDiff % 3 === 0) {
+            monthAmount += amount
+            count++
+          }
+          break
+        case 'yearly':
+          // 检查是否是该年的扣款月
+          if (billingRule.month && month === billingRule.month - 1) {
+            monthAmount += amount
+            count++
+          }
+          break
+      }
+    }
+
+    result.push({ month: month + 1, amount: monthAmount, count })
+  }
+
+  return result
+}

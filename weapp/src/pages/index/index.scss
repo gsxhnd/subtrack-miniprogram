@@ -5,6 +5,53 @@
     background: linear-gradient(180deg, #f8fafc 0%, #eef3f8 100%);
 }
 
+/* 费用统计卡片 */
+.stats-card {
+    display: flex;
+    background: #ffffff;
+    border-radius: 24rpx;
+    padding: 24rpx;
+    margin: 0 24rpx 24rpx;
+    box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.06);
+}
+
+.stats-card__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16rpx;
+}
+
+.stats-card__divider {
+    width: 2rpx;
+    background: #e2e8f0;
+    margin: 16rpx 0;
+}
+
+.stats-card__label {
+    font-size: 24rpx;
+    color: #64748b;
+    margin-bottom: 12rpx;
+}
+
+.stats-card__value {
+    display: flex;
+    align-items: baseline;
+}
+
+.stats-card__currency {
+    font-size: 28rpx;
+    color: #0f172a;
+    margin-right: 4rpx;
+}
+
+.stats-card__amount {
+    font-size: 40rpx;
+    font-weight: 600;
+    color: #0f172a;
+}
+
 .upcoming-section {
     background: #ffffff;
     border-radius: 24rpx;

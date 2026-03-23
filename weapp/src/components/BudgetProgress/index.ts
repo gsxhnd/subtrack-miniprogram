@@ -29,6 +29,9 @@ Component({
         statusText: '预算正常',
         statusColor: '#10b981',
         progressWidth: 0,
+        warningMessage: '',
+        showWarning: false,
+        overAmount: '0.00',
     },
 
     observers: {
@@ -61,6 +64,21 @@ Component({
                 exceeded: '#ef4444',
             }
 
+            // 计算超支金额
+            const overAmount = spent > budget ? ((spent - budget) / 100).toFixed(2) : '0.00'
+
+            // 生成警告消息
+            let warningMessage = ''
+            let showWarning = false
+            if (status === 'exceeded') {
+                warningMessage = `已超支 ${currencySymbols[currency] || '¥'}${overAmount}，建议调整订阅`
+                showWarning = true
+            } else if (status === 'warning') {
+                const remaining = ((budget - spent) / 100).toFixed(2)
+                warningMessage = `剩余预算 ${currencySymbols[currency] || '¥'}${remaining}`
+                showWarning = true
+            }
+
             this.setData({
                 currencySymbol: currencySymbols[currency] || '¥',
                 spentInYuan: (spent / 100).toFixed(2),
@@ -68,6 +86,9 @@ Component({
                 statusText: statusTexts[status] || '预算正常',
                 statusColor: statusColors[status] || '#10b981',
                 progressWidth: Math.min(progress, 100),
+                warningMessage,
+                showWarning,
+                overAmount,
             })
         },
     },

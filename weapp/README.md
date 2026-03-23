@@ -6,21 +6,21 @@
 
 ### 开发
 
-- `pnpm dev`
+- `npm dev`
 
-- `pnpm dev --open` 可以打包并直接启动微信开发者工具
+- `npm dev --open` 可以打包并直接启动微信开发者工具
 
 ### 构建
 
-`pnpm build`
+`npm build`
 
 ### 打开微信开发者工具
 
-`pnpm open`
+`npm open`
 
 ### 生成组件/页面
 
-`pnpm g path/to/your/component`
+`npm g path/to/your/component`
 
 ## 文档地址
 

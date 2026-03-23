@@ -25,6 +25,12 @@
     </view>
   </view>
 
+  <!-- 警告提示 -->
+  <view wx:if="{{showWarning}}" class="budget-progress__warning" style="background-color: {{status === 'exceeded' ? '#fef2f2' : '#fffbeb'}}; border-color: {{statusColor}}">
+    <text class="budget-progress__warning-icon" style="color: {{statusColor}}">{{status === 'exceeded' ? '⚠️' : '💡'}}</text>
+    <text class="budget-progress__warning-text" style="color: {{status === 'exceeded' ? '#dc2626' : '#d97706'}}">{{warningMessage}}</text>
+  </view>
+
   <view wx:if="{{budget === 0}}" class="budget-progress__empty">
     点击设置月度预算
   </view>

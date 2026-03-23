@@ -1,0 +1,89 @@
+<view class="page">
+  <!-- 基准货币设置 -->
+  <view class="section">
+    <view class="section__header">
+      <text class="section__title">基准货币</text>
+    </view>
+    <view class="currency-selector" bindtap="onBaseCurrencyChange">
+      <view class="currency-selector__current">
+        <text class="currency-selector__symbol">{{baseCurrency === 'CNY' ? '¥' : baseCurrency === 'USD' ? '$' : baseCurrency === 'EUR' ? '€' : baseCurrency === 'GBP' ? '£' : baseCurrency === 'JPY' ? '¥' : baseCurrency === 'HKD' ? 'HK$' : 'NT$'}}</text>
+        <text class="currency-selector__name">{{baseCurrency === 'CNY' ? '人民币' : baseCurrency === 'USD' ? '美元' : baseCurrency === 'EUR' ? '欧元' : baseCurrency === 'GBP' ? '英镑' : baseCurrency === 'JPY' ? '日元' : baseCurrency === 'HKD' ? '港币' : '新台币'}}</text>
+      </view>
+      <text class="currency-selector__arrow">›</text>
+    </view>
+    <text class="section__hint">所有费用将转换为基准货币进行统计</text>
+  </view>
+
+  <!-- 汇率列表 -->
+  <view class="section">
+    <view class="section__header">
+      <text class="section__title">汇率设置</text>
+      <text class="section__hint">1 外币 = ? 基准货币</text>
+    </view>
+
+    <view class="rate-list">
+      <view wx:for="{{rates}}" wx:key="fromCurrency" class="rate-item">
+        <view class="rate-item__currency">
+          <text class="rate-item__symbol">
+            {{item.fromCurrency === 'USD' ? '$' : item.fromCurrency === 'EUR' ? '€' : item.fromCurrency === 'GBP' ? '£' : item.fromCurrency === 'JPY' ? '¥' : item.fromCurrency === 'HKD' ? 'HK$' : 'NT$'}}
+          </text>
+          <text class="rate-item__name">{{item.fromCurrency === 'USD' ? '美元' : item.fromCurrency === 'EUR' ? '欧元' : item.fromCurrency === 'GBP' ? '英镑' : item.fromCurrency === 'JPY' ? '日元' : item.fromCurrency === 'HKD' ? '港币' : '新台币'}}</text>
+        </view>
+
+        <view wx:if="{{!item.editing}}" class="rate-item__value" bindtap="startEdit" data-index="{{index}}">
+          <text class="rate-item__rate">1 = {{item.rate}} {{baseCurrency === 'CNY' ? '人民币' : baseCurrency === 'USD' ? '美元' : baseCurrency === 'EUR' ? '欧元' : baseCurrency === 'GBP' ? '英镑' : baseCurrency === 'JPY' ? '日元' : baseCurrency === 'HKD' ? '港币' : '新台币'}}</text>
+          <text class="rate-item__edit">点击修改</text>
+        </view>
+
+        <view wx:else class="rate-item__edit-panel">
+          <view class="rate-item__input-wrapper">
+            <text class="rate-item__label">1 {{item.fromCurrency}} =</text>
+            <input
+              class="rate-item__input"
+              type="digit"
+              value="{{item.inputRate}}"
+              bindinput="onRateInput"
+              data-index="{{index}}"
+              focus="{{true}}"
+            />
+            <text class="rate-item__unit">{{baseCurrency}}</text>
+          </view>
+          <view class="rate-item__actions">
+            <view class="rate-item__btn rate-item__btn--cancel" bindtap="cancelEdit" data-index="{{index}}">取消</view>
+            <view class="rate-item__btn rate-item__btn--save" bindtap="saveRate" data-index="{{index}}">保存</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 说明 -->
+  <view class="tips">
+    <text class="tips__title">说明</text>
+    <text class="tips__content">• 汇率由您手动设置，不会自动更新</text>
+    <text class="tips__content">• 建议定期更新汇率以保持准确性</text>
+    <text class="tips__content">• 相同货币的订阅无需设置汇率</text>
+  </view>
+
+  <!-- 货币选择弹窗 -->
+  <view wx:if="{{showCurrencyPicker}}" class="picker-overlay" bindtap="closePicker">
+    <view class="picker" catchtap="">
+      <view class="picker__header">
+        <text class="picker__title">选择基准货币</text>
+        <view class="picker__close" bindtap="closePicker">✕</view>
+      </view>
+      <view class="picker__list">
+        <view
+          wx:for="{{currencyOptions}}"
+          wx:key="value"
+          class="picker__item {{item.value === baseCurrency ? 'picker__item--active' : ''}}"
+          data-currency="{{item.value}}"
+          bindtap="onCurrencySelect"
+        >
+          <text class="picker__item-label">{{item.label}}</text>
+          <text wx:if="{{item.value === baseCurrency}}" class="picker__item-check">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

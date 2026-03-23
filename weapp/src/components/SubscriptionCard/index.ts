@@ -17,6 +17,8 @@ Component({
         daysUntil: 0,
         nextBillingDisplay: '',
         statusDisplay: '',
+        categoryDisplay: '',
+        hasCategory: false,
     },
 
     observers: {
@@ -62,6 +64,8 @@ Component({
             }
 
             const statusDisplay = sub.status === 'cancelled' ? '已取消' : ''
+            const categoryDisplay = sub.category || ''
+            const hasCategory = !!sub.category
 
             this.setData({
                 currencySymbol: symbol,
@@ -70,6 +74,8 @@ Component({
                 daysUntil,
                 nextBillingDisplay,
                 statusDisplay,
+                categoryDisplay,
+                hasCategory,
             })
         },
     },

@@ -9,6 +9,25 @@
     bind:tap="goToBudgetSettings"
   />
 
+  <!-- 费用统计卡片 -->
+  <view class="stats-card">
+    <view class="stats-card__item" bindtap="goToStatistics">
+      <text class="stats-card__label">月均支出</text>
+      <view class="stats-card__value">
+        <text class="stats-card__currency">{{currencySymbol}}</text>
+        <text class="stats-card__amount">{{monthlySpendingDisplay}}</text>
+      </view>
+    </view>
+    <view class="stats-card__divider"></view>
+    <view class="stats-card__item" bindtap="goToStatistics">
+      <text class="stats-card__label">年度支出</text>
+      <view class="stats-card__value">
+        <text class="stats-card__currency">{{currencySymbol}}</text>
+        <text class="stats-card__amount">{{yearlySpendingDisplay}}</text>
+      </view>
+    </view>
+  </view>
+
   <!-- 即将续费列表 -->
   <view class="upcoming-section">
     <view class="upcoming-section__header">

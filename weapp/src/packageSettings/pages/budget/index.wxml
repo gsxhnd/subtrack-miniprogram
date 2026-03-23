@@ -22,6 +22,18 @@
     </view>
   </view>
 
+  <!-- 汇率设置入口 -->
+  <view class="link-item" bindtap="goToExchangeRate">
+    <view class="link-item__content">
+      <text class="link-item__icon">💱</text>
+      <view class="link-item__text">
+        <text class="link-item__title">汇率设置</text>
+        <text class="link-item__desc">设置外币转换汇率</text>
+      </view>
+    </view>
+    <text class="link-item__arrow">›</text>
+  </view>
+
   <!-- 提示信息 -->
   <view class="tips">
     <text class="tips__title">💡 提示</text>

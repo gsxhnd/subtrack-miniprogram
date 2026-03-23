@@ -15,7 +15,14 @@
     {
       "root": "packageSettings",
       "pages": [
-        "pages/budget/index"
+        "pages/budget/index",
+        "pages/exchange-rate/index"
+      ]
+    },
+    {
+      "root": "packageStatistics",
+      "pages": [
+        "pages/index/index"
       ]
     }
   ],

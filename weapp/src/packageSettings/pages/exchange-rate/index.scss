@@ -1,0 +1,260 @@
+.page {
+    min-height: 100vh;
+    background: #f8fafc;
+    padding-bottom: 32rpx;
+}
+
+.section {
+    background: #ffffff;
+    margin: 24rpx;
+    border-radius: 24rpx;
+    padding: 32rpx;
+}
+
+.section__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24rpx;
+}
+
+.section__title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.section__hint {
+    font-size: 24rpx;
+    color: #94a3b8;
+    margin-top: 16rpx;
+    display: block;
+}
+
+/* 货币选择器 */
+.currency-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24rpx;
+    background: #f8fafc;
+    border-radius: 16rpx;
+}
+
+.currency-selector__current {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+}
+
+.currency-selector__symbol {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.currency-selector__name {
+    font-size: 28rpx;
+    color: #64748b;
+}
+
+.currency-selector__arrow {
+    font-size: 32rpx;
+    color: #94a3b8;
+}
+
+/* 汇率列表 */
+.rate-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16rpx;
+}
+
+.rate-item {
+    padding: 24rpx;
+    background: #f8fafc;
+    border-radius: 16rpx;
+}
+
+.rate-item__currency {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    margin-bottom: 16rpx;
+}
+
+.rate-item__symbol {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.rate-item__name {
+    font-size: 26rpx;
+    color: #64748b;
+}
+
+.rate-item__value {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rate-item__rate {
+    font-size: 28rpx;
+    color: #0f172a;
+}
+
+.rate-item__edit {
+    font-size: 24rpx;
+    color: #3b82f6;
+}
+
+/* 编辑面板 */
+.rate-item__edit-panel {
+    margin-top: 16rpx;
+}
+
+.rate-item__input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    padding: 16rpx;
+    background: #ffffff;
+    border-radius: 12rpx;
+    border: 2rpx solid #e2e8f0;
+}
+
+.rate-item__label {
+    font-size: 26rpx;
+    color: #64748b;
+}
+
+.rate-item__input {
+    flex: 1;
+    font-size: 28rpx;
+    color: #0f172a;
+    text-align: right;
+}
+
+.rate-item__unit {
+    font-size: 26rpx;
+    color: #64748b;
+}
+
+.rate-item__actions {
+    display: flex;
+    gap: 16rpx;
+    margin-top: 16rpx;
+}
+
+.rate-item__btn {
+    flex: 1;
+    padding: 16rpx;
+    text-align: center;
+    border-radius: 12rpx;
+    font-size: 26rpx;
+}
+
+.rate-item__btn--cancel {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.rate-item__btn--save {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+/* 提示 */
+.tips {
+    margin: 24rpx;
+    padding: 24rpx;
+    background: #fffbeb;
+    border-radius: 16rpx;
+}
+
+.tips__title {
+    font-size: 26rpx;
+    font-weight: 500;
+    color: #92400e;
+    margin-bottom: 12rpx;
+    display: block;
+}
+
+.tips__content {
+    font-size: 24rpx;
+    color: #a16207;
+    display: block;
+    line-height: 1.8;
+}
+
+/* 货币选择弹窗 */
+.picker-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-end;
+    z-index: 1000;
+}
+
+.picker {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 32rpx 32rpx 0 0;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.picker__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32rpx;
+    border-bottom: 2rpx solid #e2e8f0;
+}
+
+.picker__title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.picker__close {
+    font-size: 28rpx;
+    color: #94a3b8;
+    padding: 8rpx;
+}
+
+.picker__list {
+    padding: 16rpx;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.picker__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24rpx;
+    border-radius: 12rpx;
+}
+
+.picker__item--active {
+    background: #eff6ff;
+}
+
+.picker__item-label {
+    font-size: 28rpx;
+    color: #0f172a;
+}
+
+.picker__item-check {
+    font-size: 28rpx;
+    color: #3b82f6;
+    font-weight: 600;
+}

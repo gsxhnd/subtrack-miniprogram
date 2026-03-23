@@ -27,6 +27,10 @@ Page<BudgetData, WechatMiniprogram.Page.CustomOption>({
         this.setData({ baseCurrency: currencies[e.detail.value] })
     },
 
+    goToExchangeRate() {
+        wx.navigateTo({ url: '/packageSettings/pages/exchange-rate/index' })
+    },
+
     handleSave() {
         const app = getApp()
         const budget = Math.round(parseFloat(this.data.budgetInYuan || '0') * 100)

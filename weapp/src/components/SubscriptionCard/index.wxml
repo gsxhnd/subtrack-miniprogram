@@ -13,6 +13,10 @@
 
     <view class="subscription-card__info">
       <text class="subscription-card__amount">{{amountDisplay}}/{{cycleDisplay}}</text>
+      <text wx:if="{{hasCategory}}" class="subscription-card__category">{{categoryDisplay}}</text>
+    </view>
+
+    <view class="subscription-card__footer">
       <text class="subscription-card__date">{{nextBillingDisplay}}</text>
     </view>
   </view>

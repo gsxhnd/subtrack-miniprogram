@@ -57,13 +57,27 @@
 
 .subscription-card__info {
     display: flex;
-    flex-direction: column;
-    gap: 4rpx;
+    align-items: center;
+    gap: 12rpx;
+    margin-bottom: 8rpx;
 }
 
 .subscription-card__amount {
     font-size: 26rpx;
     color: #64748b;
+}
+
+.subscription-card__category {
+    font-size: 20rpx;
+    color: #3b82f6;
+    background: #eff6ff;
+    padding: 4rpx 12rpx;
+    border-radius: 8rpx;
+}
+
+.subscription-card__footer {
+    display: flex;
+    align-items: center;
 }
 
 .subscription-card__date {

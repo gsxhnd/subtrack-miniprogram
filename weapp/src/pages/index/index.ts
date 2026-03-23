@@ -1,6 +1,6 @@
 import { eventBus, EVENTS } from '../../store/event-bus'
-import { calculateMonthlyAmount } from '../../utils/billing'
-import { convertCurrency } from '../../utils/currency'
+import { calculateMonthlyAmount, calculateYearlyAmount } from '../../utils/billing'
+import { convertCurrency, formatAmount } from '../../utils/currency'
 
 interface IndexData {
   monthlySpending: number
@@ -11,6 +11,10 @@ interface IndexData {
   upcomingRenewals: any[]
   activeCount: number
   hasBudget: boolean
+  yearlySpending: number
+  yearlySpendingDisplay: string
+  monthlySpendingDisplay: string
+  currencySymbol: string
 }
 
 Page<IndexData, WechatMiniprogram.Page.CustomOption>({
@@ -23,6 +27,10 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
     upcomingRenewals: [],
     activeCount: 0,
     hasBudget: false,
+    yearlySpending: 0,
+    yearlySpendingDisplay: '0.00',
+    monthlySpendingDisplay: '0.00',
+    currencySymbol: '¥',
   },
 
   onLoad() {
@@ -57,6 +65,18 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
       return total + converted
     }, 0)
 
+    // 计算年度支出
+    const yearlySpending = activeSubscriptions.reduce((total: number, sub: any) => {
+      const yearlyAmount = calculateYearlyAmount(sub)
+      const converted = convertCurrency(
+        yearlyAmount,
+        sub.currency,
+        settings.baseCurrency,
+        exchangeRates,
+      )
+      return total + converted
+    }, 0)
+
     // 计算预算进度
     const monthlyBudget = settings.monthlyBudget
     const budgetProgress = monthlyBudget > 0 ? Math.round((monthlySpending / monthlyBudget) * 100) : 0
@@ -81,6 +101,17 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
         new Date(a.nextBillingDate).getTime() - new Date(b.nextBillingDate).getTime(),
       )
 
+    // 货币符号
+    const currencySymbols: Record<string, string> = {
+      CNY: '¥',
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      JPY: '¥',
+      HKD: 'HK$',
+      TWD: 'NT$',
+    }
+
     this.setData({
       monthlySpending,
       monthlyBudget,
@@ -90,6 +121,10 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
       upcomingRenewals,
       activeCount: activeSubscriptions.length,
       hasBudget: monthlyBudget > 0,
+      yearlySpending,
+      yearlySpendingDisplay: (yearlySpending / 100).toFixed(2),
+      monthlySpendingDisplay: (monthlySpending / 100).toFixed(2),
+      currencySymbol: currencySymbols[settings.baseCurrency] || '¥',
     })
   },
 
@@ -108,5 +143,9 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
   goToSubscriptionDetail(e: any) {
     const { id } = e.currentTarget.dataset
     wx.navigateTo({ url: `/packageSubscription/pages/detail/index?id=${id}` })
+  },
+
+  goToStatistics() {
+    wx.navigateTo({ url: '/packageStatistics/pages/index/index' })
   },
 })

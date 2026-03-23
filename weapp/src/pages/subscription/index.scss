@@ -44,6 +44,45 @@
     color: #64748b;
 }
 
+/* 工具栏 */
+.toolbar {
+    display: flex;
+    gap: 16rpx;
+    margin-bottom: 20rpx;
+}
+
+.toolbar__btn {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    padding: 12rpx 20rpx;
+    background: #ffffff;
+    border-radius: 12rpx;
+    border: 2rpx solid #e2e8f0;
+}
+
+.toolbar__icon {
+    font-size: 24rpx;
+    color: #64748b;
+}
+
+.toolbar__text {
+    font-size: 24rpx;
+    color: #0f172a;
+}
+
+.toolbar__arrow {
+    font-size: 16rpx;
+    color: #94a3b8;
+}
+
+.toolbar__badge {
+    width: 12rpx;
+    height: 12rpx;
+    background: #3b82f6;
+    border-radius: 50%;
+}
+
 .list {
     display: flex;
     flex-direction: column;
@@ -76,4 +115,130 @@
     font-size: 48rpx;
     color: #ffffff;
     font-weight: 300;
+}
+
+/* 弹窗样式 */
+.picker-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-end;
+    z-index: 1000;
+}
+
+.picker {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 32rpx 32rpx 0 0;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.picker--bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.picker__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32rpx;
+    border-bottom: 2rpx solid #e2e8f0;
+}
+
+.picker__title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.picker__close {
+    font-size: 28rpx;
+    color: #94a3b8;
+    padding: 8rpx;
+}
+
+.picker__list {
+    padding: 16rpx;
+}
+
+.picker__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24rpx;
+    border-radius: 12rpx;
+}
+
+.picker__item--active {
+    background: #eff6ff;
+}
+
+.picker__item-label {
+    font-size: 28rpx;
+    color: #0f172a;
+}
+
+.picker__item-order {
+    font-size: 24rpx;
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+/* 筛选区域 */
+.filter-section {
+    padding: 24rpx 32rpx;
+    border-bottom: 2rpx solid #f1f5f9;
+}
+
+.filter-section__title {
+    font-size: 26rpx;
+    color: #64748b;
+    margin-bottom: 16rpx;
+    display: block;
+}
+
+.filter-section__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12rpx;
+}
+
+.filter-chip {
+    padding: 12rpx 24rpx;
+    background: #f8fafc;
+    border-radius: 20rpx;
+    border: 2rpx solid #e2e8f0;
+}
+
+.filter-chip--active {
+    background: #eff6ff;
+    border-color: #3b82f6;
+}
+
+.filter-chip text {
+    font-size: 24rpx;
+    color: #0f172a;
+}
+
+.filter-chip--active text {
+    color: #3b82f6;
+}
+
+.filter-actions {
+    padding: 24rpx 32rpx;
+    display: flex;
+    justify-content: center;
+}
+
+.filter-actions__reset {
+    padding: 16rpx 48rpx;
+    background: #f1f5f9;
+    border-radius: 12rpx;
+    font-size: 26rpx;
+    color: #64748b;
 }
