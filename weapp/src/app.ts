@@ -14,12 +14,11 @@ App({
     initialized: false,
   },
 
-  store: null as ReturnType<typeof createStore> | null,
+  store: createStore(),
 
   onLaunch() {
-    // 初始化状态管理
+    // 初始化状态管理（从本地存储恢复数据）
     initializeStore()
-    this.store = createStore()
     console.log('[SubTrack] App launched')
   },
 })

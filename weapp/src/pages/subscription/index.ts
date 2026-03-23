@@ -48,6 +48,9 @@ Page<SubscriptionData, WechatMiniprogram.Page.CustomOption>({
     },
 
     onShow() {
+        if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+            this.getTabBar().setData({ selected: 1 })
+        }
         this.refreshData()
     },
 
@@ -198,10 +201,6 @@ Page<SubscriptionData, WechatMiniprogram.Page.CustomOption>({
             filterCategory: 'all',
         })
         this.refreshData()
-    },
-
-    goToAdd() {
-        wx.navigateTo({ url: '/packageSubscription/pages/edit/index' })
     },
 
     goToDetail(e: any) {

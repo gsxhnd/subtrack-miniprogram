@@ -45,6 +45,9 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
   },
 
   onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 0 })
+    }
     this.refreshData()
   },
 
@@ -133,11 +136,7 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
   },
 
   goToSubscriptionList() {
-    wx.navigateTo({ url: '/pages/subscription/index' })
-  },
-
-  goToAddSubscription() {
-    wx.navigateTo({ url: '/packageSubscription/pages/edit/index' })
+    wx.switchTab({ url: '/pages/subscription/index' })
   },
 
   goToSubscriptionDetail(e: any) {
@@ -146,6 +145,6 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
   },
 
   goToStatistics() {
-    wx.navigateTo({ url: '/packageStatistics/pages/index/index' })
+    wx.switchTab({ url: '/pages/statistics/index' })
   },
 })

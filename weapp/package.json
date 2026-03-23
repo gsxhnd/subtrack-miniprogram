@@ -29,6 +29,6 @@
     "weapp-vite": "^6.11.3"
   },
   "dependencies": {
-    "echarts-for-weixin": "^1.0.2"
+    "chart.js": "^4.5.1"
   }
 }

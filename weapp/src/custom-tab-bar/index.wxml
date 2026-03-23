@@ -1,0 +1,50 @@
+<view class="tab-bar">
+  <!-- 左侧: 首页、订阅 -->
+  <view
+    class="tab-bar__item"
+    data-path="{{list[0].pagePath}}"
+    data-index="{{0}}"
+    bindtap="switchTab"
+  >
+    <image class="tab-bar__icon" src="{{selected === 0 ? list[0].selectedIcon : list[0].icon}}" />
+    <text class="tab-bar__label" style="color: {{selected === 0 ? selectedColor : color}}">{{list[0].text}}</text>
+  </view>
+
+  <view
+    class="tab-bar__item"
+    data-path="{{list[1].pagePath}}"
+    data-index="{{1}}"
+    bindtap="switchTab"
+  >
+    <image class="tab-bar__icon" src="{{selected === 1 ? list[1].selectedIcon : list[1].icon}}" />
+    <text class="tab-bar__label" style="color: {{selected === 1 ? selectedColor : color}}">{{list[1].text}}</text>
+  </view>
+
+  <!-- 中间: + 添加按钮 -->
+  <view class="tab-bar__add" bindtap="onAdd">
+    <view class="tab-bar__add-btn {{addPressed ? 'tab-bar__add-btn--active' : ''}}">
+      <text class="tab-bar__add-icon">+</text>
+    </view>
+  </view>
+
+  <!-- 右侧: 统计、我的 -->
+  <view
+    class="tab-bar__item"
+    data-path="{{list[2].pagePath}}"
+    data-index="{{2}}"
+    bindtap="switchTab"
+  >
+    <image class="tab-bar__icon" src="{{selected === 2 ? list[2].selectedIcon : list[2].icon}}" />
+    <text class="tab-bar__label" style="color: {{selected === 2 ? selectedColor : color}}">{{list[2].text}}</text>
+  </view>
+
+  <view
+    class="tab-bar__item"
+    data-path="{{list[3].pagePath}}"
+    data-index="{{3}}"
+    bindtap="switchTab"
+  >
+    <image class="tab-bar__icon" src="{{selected === 3 ? list[3].selectedIcon : list[3].icon}}" />
+    <text class="tab-bar__label" style="color: {{selected === 3 ? selectedColor : color}}">{{list[3].text}}</text>
+  </view>
+</view>

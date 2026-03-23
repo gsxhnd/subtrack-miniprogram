@@ -1,0 +1,121 @@
+.page {
+    min-height: 100vh;
+    background: #f8fafc;
+    padding-bottom: 200rpx;
+}
+
+/* 订阅概览卡片 */
+.overview-card {
+    background: #ffffff;
+    border-radius: 24rpx;
+    padding: 32rpx;
+    margin: 24rpx;
+    box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.06);
+}
+
+.overview-card__row {
+    display: flex;
+}
+
+.overview-card__item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12rpx;
+}
+
+.overview-card__label {
+    font-size: 24rpx;
+    color: #64748b;
+}
+
+.overview-card__value {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.overview-card__value--amount {
+    font-size: 36rpx;
+}
+
+.overview-card__amount {
+    display: flex;
+    align-items: baseline;
+}
+
+.overview-card__currency {
+    font-size: 24rpx;
+    color: #0f172a;
+    margin-right: 4rpx;
+}
+
+.overview-card__divider {
+    height: 2rpx;
+    background: #f1f5f9;
+    margin: 24rpx 0;
+}
+
+/* 设置区域 */
+.section {
+    margin: 24rpx;
+}
+
+.section__title {
+    display: block;
+    font-size: 26rpx;
+    color: #64748b;
+    margin-bottom: 16rpx;
+    padding-left: 8rpx;
+}
+
+.section__list {
+    background: #ffffff;
+    border-radius: 24rpx;
+    overflow: hidden;
+    box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.06);
+}
+
+.section__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32rpx;
+    height: 96rpx;
+    border-bottom: 2rpx solid #f1f5f9;
+}
+
+.section__item:last-child {
+    border-bottom: none;
+}
+
+.section__item-label {
+    font-size: 28rpx;
+    color: #0f172a;
+}
+
+.section__item-label--danger {
+    color: #ef4444;
+}
+
+.section__item-right {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+}
+
+.section__item-value {
+    font-size: 26rpx;
+    color: #64748b;
+}
+
+.section__item-desc {
+    font-size: 24rpx;
+    color: #94a3b8;
+}
+
+.section__item-arrow {
+    font-size: 32rpx;
+    color: #94a3b8;
+}

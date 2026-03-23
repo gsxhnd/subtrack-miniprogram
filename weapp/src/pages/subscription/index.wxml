@@ -62,11 +62,6 @@
     <text>{{currentTab === 'active' ? '暂无有效订阅' : '暂无已取消订阅'}}</text>
   </view>
 
-  <!-- 添加按钮 -->
-  <view wx:if="{{currentTab === 'active'}}" class="fab" bindtap="goToAdd">
-    <text class="fab__icon">+</text>
-  </view>
-
   <!-- 排序选择弹窗 -->
   <view wx:if="{{showSortPicker}}" class="picker-overlay" bindtap="closeSortPicker">
     <view class="picker picker--bottom" catchtap="">

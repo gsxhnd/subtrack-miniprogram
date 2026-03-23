@@ -1,7 +1,7 @@
 .page {
     box-sizing: border-box;
     min-height: 100vh;
-    padding-bottom: 120rpx;
+    padding-bottom: 200rpx;
     background: linear-gradient(180deg, #f8fafc 0%, #eef3f8 100%);
 }
 
@@ -216,24 +216,4 @@
 .empty-state__desc {
     font-size: 26rpx;
     color: #64748b;
-}
-
-.fab {
-    position: fixed;
-    right: 32rpx;
-    bottom: 32rpx;
-    width: 100rpx;
-    height: 100rpx;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #155eef 0%, #1d4ed8 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8rpx 32rpx rgba(21, 94, 239, 0.4);
-}
-
-.fab__icon {
-    font-size: 48rpx;
-    color: #ffffff;
-    font-weight: 300;
 }

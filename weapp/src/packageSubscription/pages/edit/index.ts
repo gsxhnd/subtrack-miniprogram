@@ -7,9 +7,15 @@ interface EditData {
     billingCycle: string
     billingDay: number
     billingMonth: number
+    dayRange: number[]
     startDate: string
     remark: string
     isValid: boolean
+}
+
+function buildDayRange(cycle: string): number[] {
+    const max = cycle === 'yearly' ? 31 : 28
+    return Array.from({ length: max }, (_, i) => i + 1)
 }
 
 Page<EditData, WechatMiniprogram.Page.CustomOption>({
@@ -22,6 +28,7 @@ Page<EditData, WechatMiniprogram.Page.CustomOption>({
         billingCycle: 'monthly',
         billingDay: 1,
         billingMonth: 1,
+        dayRange: buildDayRange('monthly'),
         startDate: '',
         remark: '',
         isValid: false,
@@ -37,15 +44,19 @@ Page<EditData, WechatMiniprogram.Page.CustomOption>({
             const app = getApp()
             const sub = app.store.getSubscriptionById(options.id)
             if (sub) {
+                const cycle = sub.billingRule.cycle
+                const dayRange = buildDayRange(cycle)
+                const day = Math.min(sub.billingRule.day, dayRange.length)
                 this.setData({
                     isEditMode: true,
                     subscriptionId: options.id,
                     name: sub.name,
                     amount: (sub.amount / 100).toFixed(2),
                     currency: sub.currency,
-                    billingCycle: sub.billingRule.cycle,
-                    billingDay: sub.billingRule.day,
+                    billingCycle: cycle,
+                    billingDay: day,
                     billingMonth: sub.billingRule.month || 1,
+                    dayRange,
                     startDate: sub.startDate,
                     remark: sub.remark || '',
                 })
@@ -69,15 +80,18 @@ Page<EditData, WechatMiniprogram.Page.CustomOption>({
 
     onCycleChange(e: any) {
         const cycles = ['monthly', 'quarterly', 'yearly']
-        this.setData({ billingCycle: cycles[e.detail.value] })
+        const cycle = cycles[Number(e.detail.value)]
+        const dayRange = buildDayRange(cycle)
+        const billingDay = Math.min(this.data.billingDay, dayRange.length)
+        this.setData({ billingCycle: cycle, dayRange, billingDay })
     },
 
     onDayChange(e: any) {
-        this.setData({ billingDay: e.detail.value + 1 })
+        this.setData({ billingDay: Number(e.detail.value) + 1 })
     },
 
     onMonthChange(e: any) {
-        this.setData({ billingMonth: e.detail.value + 1 })
+        this.setData({ billingMonth: Number(e.detail.value) + 1 })
     },
 
     onDateChange(e: any) {

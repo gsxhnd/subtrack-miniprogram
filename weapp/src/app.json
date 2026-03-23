@@ -2,8 +2,34 @@
   "$schema": "https://vite.icebreaker.top/app.json",
   "pages": [
     "pages/index/index",
-    "pages/subscription/index"
+    "pages/subscription/index",
+    "pages/statistics/index",
+    "pages/profile/index"
   ],
+  "tabBar": {
+    "custom": true,
+    "color": "#64748b",
+    "selectedColor": "#155eef",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/subscription/index",
+        "text": "订阅"
+      },
+      {
+        "pagePath": "pages/statistics/index",
+        "text": "统计"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
   "subPackages": [
     {
       "root": "packageSubscription",
@@ -17,12 +43,6 @@
       "pages": [
         "pages/budget/index",
         "pages/exchange-rate/index"
-      ]
-    },
-    {
-      "root": "packageStatistics",
-      "pages": [
-        "pages/index/index"
       ]
     }
   ],
