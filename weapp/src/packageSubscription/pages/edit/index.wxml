@@ -1,0 +1,99 @@
+<view class="page">
+  <view class="form">
+    <!-- 名称 -->
+    <view class="form-item">
+      <text class="form-item__label">名称 *</text>
+      <input
+        class="form-item__input"
+        placeholder="输入订阅名称"
+        value="{{name}}"
+        data-field="name"
+        bindinput="onInputChange"
+        maxlength="50"
+      />
+    </view>
+
+    <!-- 金额 -->
+    <view class="form-item">
+      <text class="form-item__label">金额 *</text>
+      <view class="form-item__row">
+        <input
+          class="form-item__input form-item__input--amount"
+          type="digit"
+          placeholder="0.00"
+          value="{{amount}}"
+          data-field="amount"
+          bindinput="onInputChange"
+        />
+        <picker mode="selector" range="{{['CNY', 'USD', 'EUR', 'GBP', 'JPY', 'HKD', 'TWD']}}" bindchange="onCurrencyChange">
+          <view class="form-item__select">
+            <text>{{currency}}</text>
+            <text class="form-item__arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 计费周期 -->
+    <view class="form-item">
+      <text class="form-item__label">计费周期</text>
+      <picker mode="selector" range="{{['每月', '每季度', '每年']}}" bindchange="onCycleChange">
+        <view class="form-item__select">
+          <text>{{billingCycle === 'monthly' ? '每月' : billingCycle === 'quarterly' ? '每季度' : '每年'}}</text>
+          <text class="form-item__arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 扣款日 -->
+    <view class="form-item">
+      <text class="form-item__label">扣款日</text>
+      <picker mode="selector" range="{{[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]}}" value="{{billingDay - 1}}" bindchange="onDayChange">
+        <view class="form-item__select">
+          <text>每月 {{billingDay}} 日</text>
+          <text class="form-item__arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 年付月份 -->
+    <view wx:if="{{billingCycle === 'yearly'}}" class="form-item">
+      <text class="form-item__label">扣款月份</text>
+      <picker mode="selector" range="{{['1 月', '2 月', '3 月', '4 月', '5 月', '6 月', '7 月', '8 月', '9 月', '10 月', '11 月', '12 月']}}" value="{{billingMonth - 1}}" bindchange="onMonthChange">
+        <view class="form-item__select">
+          <text>每年 {{billingMonth}} 月</text>
+          <text class="form-item__arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 开始日期 -->
+    <view class="form-item">
+      <text class="form-item__label">开始日期</text>
+      <picker mode="date" value="{{startDate}}" bindchange="onDateChange">
+        <view class="form-item__select">
+          <text>{{startDate}}</text>
+          <text class="form-item__arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 备注 -->
+    <view class="form-item">
+      <text class="form-item__label">备注</text>
+      <textarea
+        class="form-item__textarea"
+        placeholder="添加备注（可选）"
+        value="{{remark}}"
+        data-field="remark"
+        bindinput="onInputChange"
+        maxlength="200"
+      />
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <button class="submit-btn {{isValid ? '' : 'submit-btn--disabled'}}" disabled="{{!isValid}}" bindtap="handleSubmit">
+    {{isEditMode ? '保存修改' : '添加订阅'}}
+  </button>
+</view>

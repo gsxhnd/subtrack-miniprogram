@@ -1,0 +1,72 @@
+<view class="page">
+  <!-- 预算进度卡片 -->
+  <BudgetProgress
+    spent="{{monthlySpending}}"
+    budget="{{monthlyBudget}}"
+    progress="{{budgetProgress}}"
+    status="{{budgetStatus}}"
+    currency="{{baseCurrency}}"
+    bind:tap="goToBudgetSettings"
+  />
+
+  <!-- 即将续费列表 -->
+  <view class="upcoming-section">
+    <view class="upcoming-section__header">
+      <text class="upcoming-section__title">即将续费</text>
+      <text class="upcoming-section__count">{{upcomingRenewals.length}}</text>
+    </view>
+
+    <view wx:if="{{upcomingRenewals.length === 0}}" class="upcoming-section__empty">
+      <text>暂无即将续费的订阅</text>
+    </view>
+
+    <view wx:else class="upcoming-section__list">
+      <view
+        wx:for="{{upcomingRenewals}}"
+        wx:key="id"
+        class="upcoming-item"
+        data-id="{{item.id}}"
+        bindtap="goToSubscriptionDetail"
+      >
+        <view class="upcoming-item__icon">
+          <text>{{item.name[0]}}</text>
+        </view>
+        <view class="upcoming-item__content">
+          <text class="upcoming-item__name">{{item.name}}</text>
+          <text class="upcoming-item__date">{{item.nextBillingDate}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="quick-actions">
+    <view class="quick-actions__item" bindtap="goToSubscriptionList">
+      <view class="quick-actions__icon quick-actions__icon--list">
+        <text>📋</text>
+      </view>
+      <text class="quick-actions__label">订阅列表</text>
+      <text class="quick-actions__count">{{activeCount}} 个</text>
+    </view>
+
+    <view class="quick-actions__item" bindtap="goToBudgetSettings">
+      <view class="quick-actions__icon quick-actions__icon--budget">
+        <text>💰</text>
+      </view>
+      <text class="quick-actions__label">预算设置</text>
+      <text class="quick-actions__count">{{hasBudget ? '已设置' : '未设置'}}</text>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{activeCount === 0}}" class="empty-state">
+    <view class="empty-state__icon">📊</view>
+    <text class="empty-state__title">还没有订阅</text>
+    <text class="empty-state__desc">点击下方按钮添加你的第一个订阅</text>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="fab" bindtap="goToAddSubscription">
+    <text class="fab__icon">+</text>
+  </view>
+</view>

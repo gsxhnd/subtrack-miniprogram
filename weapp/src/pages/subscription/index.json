@@ -1,0 +1,6 @@
+{
+    "navigationBarTitleText": "订阅列表",
+    "usingComponents": {
+        "SubscriptionCard": "/components/SubscriptionCard/index"
+    }
+}

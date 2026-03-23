@@ -1,0 +1,31 @@
+<view class="budget-progress" bindtap="handleTap">
+  <view class="budget-progress__header">
+    <view class="budget-progress__title">本月支出</view>
+    <view class="budget-progress__status" style="color: {{statusColor}}">
+      {{statusText}}
+    </view>
+  </view>
+
+  <view class="budget-progress__amount">
+    <text class="budget-progress__currency">{{currencySymbol}}</text>
+    <text class="budget-progress__spent">{{spentInYuan}}</text>
+    <text class="budget-progress__divider">/</text>
+    <text class="budget-progress__budget">{{budgetInYuan}}</text>
+  </view>
+
+  <view class="budget-progress__bar">
+    <view class="budget-progress__track">
+      <view
+        class="budget-progress__fill"
+        style="width: {{progressWidth}}%; background-color: {{statusColor}}"
+      />
+    </view>
+    <view class="budget-progress__percent" style="color: {{statusColor}}">
+      {{progress}}%
+    </view>
+  </view>
+
+  <view wx:if="{{budget === 0}}" class="budget-progress__empty">
+    点击设置月度预算
+  </view>
+</view>

@@ -1,0 +1,54 @@
+<view class="page">
+  <!-- 标签栏 -->
+  <view class="tabs">
+    <view
+      class="tabs__item {{currentTab === 'active' ? 'tabs__item--active' : ''}}"
+      data-tab="active"
+      bindtap="switchTab"
+    >
+      <text class="tabs__label">有效订阅</text>
+      <text class="tabs__count">{{activeSubscriptions.length}}</text>
+    </view>
+    <view
+      class="tabs__item {{currentTab === 'cancelled' ? 'tabs__item--active' : ''}}"
+      data-tab="cancelled"
+      bindtap="switchTab"
+    >
+      <text class="tabs__label">已取消</text>
+      <text class="tabs__count">{{cancelledSubscriptions.length}}</text>
+    </view>
+  </view>
+
+  <!-- 订阅列表 -->
+  <view class="list">
+    <block wx:if="{{currentTab === 'active'}}">
+      <SubscriptionCard
+        wx:for="{{activeSubscriptions}}"
+        wx:key="id"
+        subscription="{{item}}"
+        bind:tap="goToDetail"
+        bind:edit="goToEdit"
+      />
+    </block>
+    <block wx:else>
+      <SubscriptionCard
+        wx:for="{{cancelledSubscriptions}}"
+        wx:key="id"
+        subscription="{{item}}"
+        showStatus="{{true}}"
+        bind:tap="goToDetail"
+        bind:edit="goToEdit"
+      />
+    </block>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{(currentTab === 'active' && activeSubscriptions.length === 0) || (currentTab === 'cancelled' && cancelledSubscriptions.length === 0)}}" class="empty-state">
+    <text>{{currentTab === 'active' ? '暂无有效订阅' : '暂无已取消订阅'}}</text>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view wx:if="{{currentTab === 'active'}}" class="fab" bindtap="goToAdd">
+    <text class="fab__icon">+</text>
+  </view>
+</view>

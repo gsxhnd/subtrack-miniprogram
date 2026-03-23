@@ -1,0 +1,31 @@
+{
+  "$schema": "https://vite.icebreaker.top/app.json",
+  "pages": [
+    "pages/index/index",
+    "pages/subscription/index"
+  ],
+  "subPackages": [
+    {
+      "root": "packageSubscription",
+      "pages": [
+        "pages/detail/index",
+        "pages/edit/index"
+      ]
+    },
+    {
+      "root": "packageSettings",
+      "pages": [
+        "pages/budget/index"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTitleText": "SubTrack",
+    "navigationBarBackgroundColor": "#0f172a",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f8fafc"
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json"
+}

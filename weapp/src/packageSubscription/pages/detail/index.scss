@@ -1,0 +1,122 @@
+.page {
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding: 24rpx;
+    background: #f8fafc;
+}
+
+.detail__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48rpx 24rpx;
+    background: #ffffff;
+    border-radius: 24rpx;
+    margin-bottom: 24rpx;
+}
+
+.detail__icon {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 24rpx;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20rpx;
+}
+
+.detail__icon text {
+    font-size: 48rpx;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.detail__name {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 12rpx;
+}
+
+.detail__status {
+    padding: 8rpx 20rpx;
+    background: #fef2f2;
+    border-radius: 12rpx;
+}
+
+.detail__status text {
+    font-size: 24rpx;
+    color: #ef4444;
+}
+
+.info-card {
+    background: #ffffff;
+    border-radius: 24rpx;
+    padding: 24rpx;
+    margin-bottom: 24rpx;
+}
+
+.info-card__row {
+    display: flex;
+    justify-content: space-between;
+    padding: 20rpx 0;
+    border-bottom: 1rpx solid #f1f5f9;
+}
+
+.info-card__row:last-child {
+    border-bottom: none;
+}
+
+.info-card__label {
+    font-size: 28rpx;
+    color: #64748b;
+}
+
+.info-card__value {
+    font-size: 28rpx;
+    color: #0f172a;
+    font-weight: 500;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16rpx;
+}
+
+.actions__btn {
+    padding: 24rpx;
+    border-radius: 16rpx;
+    font-size: 28rpx;
+    font-weight: 500;
+    text-align: center;
+}
+
+.actions__btn--primary {
+    background: #155eef;
+    color: #ffffff;
+}
+
+.actions__btn--warning {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.actions__btn--success {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.actions__btn--danger {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400rpx;
+    color: #64748b;
+}

@@ -10,8 +10,8 @@
 
 | 层级 | 技术选型 | 说明 |
 |------|----------|------|
-| 前端框架 | [weapp-vite](https://vite.icebreaker.top/) + Vue 3 | 现代化小程序工程化工具，基于 Vite + Vue 3 |
-| UI组件库 | Vant Weapp / 自定义组件 | 微信小程序原生组件库 |
+| 前端框架 | [weapp-vite + wevue](https://vite.icebreaker.top/) | 现代化小程序工程化工具，基于 Vite + Vue 3 |
+| UI组件库 | 自定义组件 | 微信小程序原生组件库 |
 | 状态管理 | Wevu / Pinia | Vue 3 风格响应式状态管理 |
 | 数据存储 | 微信小程序本地存储 | 数据完全存储在本地，无需云端服务 |
 | 图表库 | ECharts for WeChat | 微信小程序图表组件 |
@@ -617,4 +617,3 @@ const STORAGE_KEYS = {
 | 主包 | 首页、订阅列表、设置 |
 | packageDetail | 订阅详情、订阅编辑 |
 | packageStatistics | 统计页 |
-

@@ -1,0 +1,51 @@
+<view class="page">
+  <view wx:if="{{subscription}}" class="detail">
+    <!-- 头部 -->
+    <view class="detail__header">
+      <view class="detail__icon">
+        <text>{{subscription.name[0]}}</text>
+      </view>
+      <text class="detail__name">{{subscription.name}}</text>
+      <view wx:if="{{isCancelled}}" class="detail__status">
+        <text>已取消</text>
+      </view>
+    </view>
+
+    <!-- 信息卡片 -->
+    <view class="info-card">
+      <view class="info-card__row">
+        <text class="info-card__label">金额</text>
+        <text class="info-card__value">{{amountDisplay}} / {{cycleDisplay}}</text>
+      </view>
+      <view class="info-card__row">
+        <text class="info-card__label">货币</text>
+        <text class="info-card__value">{{currencyName}}</text>
+      </view>
+      <view class="info-card__row">
+        <text class="info-card__label">下次扣款</text>
+        <text class="info-card__value">{{subscription.nextBillingDate}}</text>
+      </view>
+      <view class="info-card__row">
+        <text class="info-card__label">开始日期</text>
+        <text class="info-card__value">{{subscription.startDate}}</text>
+      </view>
+      <view wx:if="{{subscription.remark}}" class="info-card__row">
+        <text class="info-card__label">备注</text>
+        <text class="info-card__value">{{subscription.remark}}</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="actions">
+      <button class="actions__btn actions__btn--primary" bindtap="handleEdit">编辑</button>
+      <button wx:if="{{!isCancelled}}" class="actions__btn actions__btn--warning" bindtap="handleCancel">取消订阅</button>
+      <button wx:else class="actions__btn actions__btn--success" bindtap="handleRestore">恢复订阅</button>
+      <button class="actions__btn actions__btn--danger" bindtap="handleDelete">删除</button>
+    </view>
+  </view>
+
+  <!-- 未找到 -->
+  <view wx:else class="not-found">
+    <text>订阅不存在</text>
+  </view>
+</view>

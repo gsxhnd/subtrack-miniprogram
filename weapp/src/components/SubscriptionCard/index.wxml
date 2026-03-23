@@ -1,0 +1,23 @@
+<view class="subscription-card" bindtap="handleTap">
+  <view class="subscription-card__icon">
+    <text>{{subscription.name[0]}}</text>
+  </view>
+
+  <view class="subscription-card__content">
+    <view class="subscription-card__header">
+      <text class="subscription-card__name">{{subscription.name}}</text>
+      <text wx:if="{{showStatus && statusDisplay}}" class="subscription-card__status">
+        {{statusDisplay}}
+      </text>
+    </view>
+
+    <view class="subscription-card__info">
+      <text class="subscription-card__amount">{{amountDisplay}}/{{cycleDisplay}}</text>
+      <text class="subscription-card__date">{{nextBillingDisplay}}</text>
+    </view>
+  </view>
+
+  <view class="subscription-card__action" catchtap="handleEdit">
+    <text class="subscription-card__action-text">编辑</text>
+  </view>
+</view>

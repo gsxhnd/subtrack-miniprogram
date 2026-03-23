@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "SubTrack",
+  "usingComponents": {
+    "BudgetProgress": "/components/BudgetProgress/index",
+    "SubscriptionCard": "/components/SubscriptionCard/index"
+  }
+}
