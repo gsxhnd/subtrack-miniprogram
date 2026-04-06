@@ -59,6 +59,13 @@ Component({
                 selectedIcon: svgToDataUri(iconGenerators[index](SELECTED_COLOR)),
             }))
             this.setData({ list })
+            this.updateSelected()
+        },
+    },
+
+    pageLifetimes: {
+        show() {
+            this.updateSelected()
         },
     },
 
@@ -67,6 +74,16 @@ Component({
             const { index, path } = e.currentTarget.dataset
             wx.switchTab({ url: '/' + path })
             this.setData({ selected: index })
+        },
+
+        updateSelected() {
+            const pages = getCurrentPages()
+            const currentPage = pages[pages.length - 1]
+            const route = currentPage?.route || ''
+            const index = this.data.list.findIndex(item => item.pagePath === route)
+            if (index !== -1 && index !== this.data.selected) {
+                this.setData({ selected: index })
+            }
         },
 
         onAdd() {
