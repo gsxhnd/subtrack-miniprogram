@@ -5,8 +5,8 @@
 ```
 backend/
 ├── Dockerfile
-├── main.go / main.rs
-├── go.mod / Cargo.toml
+├── main.go
+├── go.mod
 ├── handlers/
 ├── models/
 ├── services/

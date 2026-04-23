@@ -34,7 +34,7 @@
 
 使用 CloudBase 云函数时，**无需显式登录接口**。用户身份通过 `wx.cloud.callFunction` 自动传递，云函数中通过 `cloud.getWXContext()` 获取已验证的 OPENID。
 
-详见 [authentication.md](../backend/authentication.md)。
+详见 [认证与权限](./09-authentication.md)。
 
 ### 2.2 Go 后端服务（CloudRun / HTTP API）
 
@@ -361,4 +361,4 @@ X-Platform-UserID: oXXXX        # 平台用户ID
 X-Timestamp: 1711238400         # 时间戳（防重放）
 ```
 
-详见 [authentication.md](../backend/authentication.md)。
+详见 [认证与权限](./09-authentication.md)。
