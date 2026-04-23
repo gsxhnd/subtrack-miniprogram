@@ -1,4 +1,75 @@
-# SubTrack 数据模型
+# SubTrack 后端接口与部署
+
+## API 约定
+
+- 协议：HTTPS
+- 编码：UTF-8
+- 数据格式：JSON
+- 统一响应：
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {}
+}
+```
+
+## 认证方式
+
+### 小程序 + 云函数
+
+- 使用 `wx.cloud.callFunction` 时身份自动注入
+- 云函数通过 `cloud.getWXContext()` 获取 `OPENID`
+
+### Cloud Run / HTTP API
+
+- 请求头必须携带：
+  - `X-Platform`
+  - `X-Platform-UserID`
+  - `X-Timestamp`
+
+## 核心接口（最小集合）
+
+- `GET /subscriptions`：查询订阅列表
+- `POST /subscriptions`：创建订阅
+- `PUT /subscriptions/:id`：更新订阅
+- `DELETE /subscriptions/:id`：删除订阅
+- `POST /subscriptions/:id/cancel`：取消订阅
+- `GET /settings` / `PUT /settings`：用户设置
+- `GET /statistics/summary`：概览统计
+- `POST /sync`：增量同步
+
+## 数据库（MySQL）
+
+### 主要表
+
+- `users`
+- `subscriptions`
+- `user_settings`
+- `subscription_history`
+
+### 关键索引
+
+- `users.openid`（唯一）
+- `subscriptions(user_id, status)`
+- `subscriptions.next_billing_date`
+- `subscription_history(subscription_id)`
+
+## 部署说明（Cloud Run）
+
+1. 使用 Go 多阶段 Docker 构建镜像
+2. 通过 `tcb run deploy` 发布服务
+3. 配置健康检查：`GET /health`
+4. 启用日志与告警（错误率、P95、CPU、内存）
+
+## 安全与权限
+
+- 所有用户数据查询必须按 `user_id` 过滤
+- 时间戳校验防重放（建议 5 分钟窗口）
+- 生产环境仅保留必要日志，敏感字段不落盘
+
+
 
 ## 1. TypeScript 类型定义
 
