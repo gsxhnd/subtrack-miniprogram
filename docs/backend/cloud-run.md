@@ -36,28 +36,6 @@ EXPOSE 8080
 CMD ["./main"]
 ```
 
-### 2.2 Rust 版本
-
-```dockerfile
-FROM rust:1.75-alpine AS builder
-
-WORKDIR /app
-COPY Cargo.toml Cargo.lock ./
-RUN mkdir src && echo "fn main() {}" > src/main.rs
-RUN cargo build --release
-
-COPY . .
-RUN cargo build --release
-
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
-WORKDIR /root/
-COPY --from=builder /app/target/release/subtrack .
-
-EXPOSE 8080
-CMD ["./subtrack"]
-```
-
 ## 3. 构建与部署
 
 ### 3.1 本地构建测试
@@ -94,11 +72,13 @@ tcb run deploy \
 ### 4.1 资源配置
 
 **开发环境：**
+
 - CPU: 0.5 核
 - 内存: 1GB
 - 实例数: 1
 
 **生产环境：**
+
 - CPU: 1 核
 - 内存: 2GB
 - 实例数: 1-5（自动扩缩容）
@@ -127,6 +107,7 @@ GET /health
 ```
 
 **响应：**
+
 ```json
 {
   "status": "ok",
@@ -137,6 +118,7 @@ GET /health
 ### 5.2 配置健康检查
 
 在云托管控制台配置：
+
 - 检查路径: `/health`
 - 检查间隔: 30 秒
 - 超时时间: 5 秒

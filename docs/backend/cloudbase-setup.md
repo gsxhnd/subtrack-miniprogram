@@ -37,6 +37,7 @@ CREATE DATABASE subtrack CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ### 2.3 连接信息
 
 记录以下信息，用于后端服务配置：
+
 - 主机地址：`xxx.mysql.tencentcdb.com`
 - 端口：`3306`
 - 数据库名：`subtrack`
@@ -57,13 +58,12 @@ DB_NAME=subtrack
 DB_USER=root
 DB_PASSWORD=your_password
 
-# JWT 配置
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRES_IN=7200
-
 # 微信小程序配置
 WX_APP_ID=your_app_id
 WX_APP_SECRET=your_app_secret
+
+# CloudBase 环境配置
+CLOUDBASE_ENV_ID=your-env-id
 
 # 服务配置
 PORT=8080
@@ -79,6 +79,7 @@ ENV=production
 ### 4.2 安全组配置
 
 MySQL 安全组规则：
+
 - 入站规则：允许云托管服务访问 3306 端口
 
 ## 5. 域名配置
@@ -117,10 +118,12 @@ MySQL 安全组规则：
 ### 7.1 资源配置建议
 
 **开发环境：**
+
 - 云托管：0.5核1GB
 - MySQL：1核2GB
 
 **生产环境：**
+
 - 云托管：1核2GB（自动扩缩容）
 - MySQL：2核4GB
 

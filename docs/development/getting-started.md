@@ -11,10 +11,8 @@
 ### 1.2 后端开发环境
 
 **Go 版本：**
-- Go >= 1.21
 
-**Rust 版本：**
-- Rust >= 1.75
+- Go >= 1.21
 
 ### 1.3 数据库
 
@@ -73,24 +71,13 @@ go mod download
 
 # 配置环境变量
 cp .env.example .env
-# 编辑 .env 文件
+# 编辑 .env 文件，配置数据库连接和 CloudBase 环境
 
 # 运行
 go run main.go
 ```
 
-### 3.2 Rust 版本
-
-```bash
-cd backend-rust
-
-# 配置环境变量
-cp .env.example .env
-# 编辑 .env 文件
-
-# 运行
-cargo run
-```
+服务将在 `http://localhost:8080` 启动。
 
 ## 4. 数据库初始化
 
@@ -104,14 +91,9 @@ CREATE DATABASE subtrack CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ### 4.2 运行迁移
 
-**Go 版本：**
 ```bash
+cd backend-go
 go run migrate.go up
-```
-
-**Rust 版本：**
-```bash
-sqlx migrate run
 ```
 
 ## 5. 常见问题
@@ -119,6 +101,7 @@ sqlx migrate run
 ### 5.1 前端无法连接后端
 
 检查：
+
 - 后端服务是否启动
 - API 地址配置是否正确
 - 网络代理设置
@@ -126,6 +109,7 @@ sqlx migrate run
 ### 5.2 数据库连接失败
 
 检查：
+
 - MySQL 服务是否启动
 - 数据库配置是否正确
 - 用户权限是否足够
@@ -133,6 +117,7 @@ sqlx migrate run
 ### 5.3 微信开发者工具报错
 
 检查：
+
 - AppID 是否正确
 - 项目路径是否正确
 - 是否开启了不校验合法域名选项
@@ -143,7 +128,6 @@ sqlx migrate run
 
 - 前端：遵循 ESLint 配置
 - 后端 Go：使用 `gofmt` 格式化
-- 后端 Rust：使用 `rustfmt` 格式化
 
 ### 6.2 提交规范
 

@@ -136,8 +136,8 @@ VALUES ('test-user-001', 'test-openid', '测试用户');
 ### 5.1 版本管理
 
 使用数据库迁移工具管理表结构变更：
+
 - Go: [golang-migrate](https://github.com/golang-migrate/migrate)
-- Rust: [sqlx-cli](https://github.com/launchbadge/sqlx)
 
 ### 5.2 迁移文件示例
 

@@ -20,6 +20,7 @@
 ```
 
 **状态码说明：**
+
 - `0`: 成功
 - `400`: 请求参数错误
 - `401`: 未授权
@@ -27,52 +28,33 @@
 - `404`: 资源不存在
 - `500`: 服务器错误
 
-## 2. 认证接口
+## 2. 认证说明
 
-### 2.1 微信登录
+### 2.1 微信小程序（CloudBase 云函数）
 
-**POST** `/auth/login`
+使用 CloudBase 云函数时，**无需显式登录接口**。用户身份通过 `wx.cloud.callFunction` 自动传递，云函数中通过 `cloud.getWXContext()` 获取已验证的 OPENID。
 
-**请求：**
-```json
-{
-  "code": "wx_login_code"
-}
+详见 [authentication.md](../backend/authentication.md)。
+
+### 2.2 Go 后端服务（CloudRun / HTTP API）
+
+当使用 Go 后端服务时，小程序需在请求头中携带身份信息：
+
+```http
+X-Platform: wechat
+X-Platform-UserID: oXXXX_openid
+X-Timestamp: 1711238400
 ```
 
-**响应：**
-```json
-{
-  "code": 0,
-  "data": {
-    "token": "jwt_token",
-    "expiresIn": 7200,
-    "user": {
-      "id": "user_id",
-      "openid": "wx_openid",
-      "nickname": "用户昵称",
-      "avatar": "头像URL"
-    }
-  }
-}
-```
+**响应示例：**
 
-### 2.2 刷新 Token
-
-**POST** `/auth/refresh`
-
-**请求头：**
-```
-Authorization: Bearer {token}
-```
-
-**响应：**
 ```json
 {
   "code": 0,
   "data": {
-    "token": "new_jwt_token",
-    "expiresIn": 7200
+    "user_id": "unified_user_id",
+    "platform": "wechat",
+    "openid": "wx_openid"
   }
 }
 ```
@@ -84,11 +66,13 @@ Authorization: Bearer {token}
 **GET** `/subscriptions`
 
 **查询参数：**
+
 - `status`: 状态筛选 (active/cancelled/all)
 - `sortBy`: 排序字段 (name/amount/nextBillingDate)
 - `sortOrder`: 排序方向 (asc/desc)
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -118,6 +102,7 @@ Authorization: Bearer {token}
 **POST** `/subscriptions`
 
 **请求：**
+
 ```json
 {
   "name": "ChatGPT Plus",
@@ -132,6 +117,7 @@ Authorization: Bearer {token}
 ```
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -154,6 +140,7 @@ Authorization: Bearer {token}
 **PUT** `/subscriptions/:id`
 
 **请求：**
+
 ```json
 {
   "name": "ChatGPT Plus",
@@ -163,6 +150,7 @@ Authorization: Bearer {token}
 ```
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -178,6 +166,7 @@ Authorization: Bearer {token}
 **DELETE** `/subscriptions/:id`
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -190,6 +179,7 @@ Authorization: Bearer {token}
 **POST** `/subscriptions/:id/cancel`
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -208,6 +198,7 @@ Authorization: Bearer {token}
 **GET** `/settings`
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -226,6 +217,7 @@ Authorization: Bearer {token}
 **PUT** `/settings`
 
 **请求：**
+
 ```json
 {
   "monthlyBudget": 50000,
@@ -236,6 +228,7 @@ Authorization: Bearer {token}
 ```
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -250,6 +243,7 @@ Authorization: Bearer {token}
 **GET** `/statistics/summary`
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -268,9 +262,11 @@ Authorization: Bearer {token}
 **GET** `/statistics/trend`
 
 **查询参数：**
+
 - `period`: 时间范围 (month/quarter/year)
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -289,6 +285,7 @@ Authorization: Bearer {token}
 **GET** `/statistics/category`
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -309,6 +306,7 @@ Authorization: Bearer {token}
 **POST** `/sync`
 
 **请求：**
+
 ```json
 {
   "lastSyncTime": "2026-03-23T00:00:00Z",
@@ -323,6 +321,7 @@ Authorization: Bearer {token}
 ```
 
 **响应：**
+
 ```json
 {
   "code": 0,
@@ -340,7 +339,7 @@ Authorization: Bearer {token}
 |--------|------|
 | 0 | 成功 |
 | 400 | 请求参数错误 |
-| 401 | 未授权，Token 无效或过期 |
+| 401 | 未授权，身份验证失败 |
 | 403 | 无权限访问 |
 | 404 | 资源不存在 |
 | 409 | 数据冲突 |
@@ -348,8 +347,18 @@ Authorization: Bearer {token}
 
 ## 8. 认证机制
 
-所有需要认证的接口，请求头需携带 JWT Token：
+### 8.1 微信小程序（云函数）
 
+使用 `wx.cloud.callFunction` 调用云函数时，用户身份自动传递，无需额外配置。
+
+### 8.2 Go 后端服务（HTTP API）
+
+所有需要认证的 HTTP 接口，请求头需携带以下字段：
+
+```http
+X-Platform: wechat              # 平台标识
+X-Platform-UserID: oXXXX        # 平台用户ID
+X-Timestamp: 1711238400         # 时间戳（防重放）
 ```
-Authorization: Bearer {token}
-```
+
+详见 [authentication.md](../backend/authentication.md)。
