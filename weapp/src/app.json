@@ -4,8 +4,24 @@
     "pages/index/index",
     "pages/subscription/index",
     "pages/statistics/index",
-    "pages/profile/index"
+    "pages/profile/index",
+    "pages/subscription/detail/index",
+    "pages/subscription/edit/index",
+    "pages/settings/budget/index",
+    "pages/settings/exchange-rate/index"
   ],
+  "subPackages": [
+    {
+      "root": "pkg-icons",
+      "pages": [],
+      "independent": false
+    }
+  ],
+  // "preloadRule": {
+  //   "pkg-icons/index": {
+  //     "packages": ["_APP__"]
+  //   }
+  // },
   "tabBar": {
     "custom": true,
     "color": "#64748b",
@@ -30,22 +46,6 @@
       }
     ]
   },
-  "subPackages": [
-    {
-      "root": "packageSubscription",
-      "pages": [
-        "pages/detail/index",
-        "pages/edit/index"
-      ]
-    },
-    {
-      "root": "packageSettings",
-      "pages": [
-        "pages/budget/index",
-        "pages/exchange-rate/index"
-      ]
-    }
-  ],
   "window": {
     "navigationBarTitleText": "SubTrack",
     "navigationBarBackgroundColor": "#0f172a",

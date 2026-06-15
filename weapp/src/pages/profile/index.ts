@@ -1,6 +1,7 @@
 import { eventBus, EVENTS } from '../../store/event-bus'
 import { calculateMonthlyAmount, calculateYearlyAmount } from '../../utils/billing'
 import { convertCurrency } from '../../utils/currency'
+import { getIconAsync } from '../../utils/icons'
 
 interface ProfileData {
     activeCount: number
@@ -12,6 +13,7 @@ interface ProfileData {
     reminderEnabled: boolean
     reminderDays: number
     appVersion: string
+    iconChevronRight: string
 }
 
 Page<ProfileData, WechatMiniprogram.Page.CustomOption>({
@@ -25,12 +27,16 @@ Page<ProfileData, WechatMiniprogram.Page.CustomOption>({
         reminderEnabled: true,
         reminderDays: 3,
         appVersion: '1.0.0',
+        iconChevronRight: '',
     },
 
     onLoad() {
         this.refreshData()
         eventBus.on(EVENTS.SUBSCRIPTION_CHANGED, this.refreshData.bind(this))
         eventBus.on(EVENTS.SETTINGS_CHANGED, this.refreshData.bind(this))
+        getIconAsync('chevronRight', { color: '#94a3b8', size: 22 }).then((uri) => {
+            this.setData({ iconChevronRight: uri })
+        })
     },
 
     onUnload() {
@@ -87,11 +93,11 @@ Page<ProfileData, WechatMiniprogram.Page.CustomOption>({
     },
 
     goToBudgetSettings() {
-        wx.navigateTo({ url: '/packageSettings/pages/budget/index' })
+        wx.navigateTo({ url: '/pages/settings/budget/index' })
     },
 
     goToExchangeRate() {
-        wx.navigateTo({ url: '/packageSettings/pages/exchange-rate/index' })
+        wx.navigateTo({ url: '/pages/settings/exchange-rate/index' })
     },
 
     handleExportData() {

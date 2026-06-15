@@ -62,18 +62,18 @@
 }
 
 .toolbar__icon {
-    font-size: 24rpx;
-    color: #64748b;
+  width: 36rpx;
+  height: 36rpx;
 }
 
 .toolbar__text {
-    font-size: 24rpx;
-    color: #0f172a;
+  font-size: 24rpx;
+  color: #0f172a;
 }
 
 .toolbar__arrow {
-    font-size: 16rpx;
-    color: #94a3b8;
+  width: 28rpx;
+  height: 28rpx;
 }
 
 .toolbar__badge {
@@ -137,9 +137,9 @@
 }
 
 .picker__close {
-    font-size: 28rpx;
-    color: #94a3b8;
-    padding: 8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  padding: 8rpx;
 }
 
 .picker__list {
@@ -164,9 +164,8 @@
 }
 
 .picker__item-order {
-    font-size: 24rpx;
-    color: #3b82f6;
-    font-weight: 600;
+  width: 32rpx;
+  height: 32rpx;
 }
 
 /* 筛选区域 */

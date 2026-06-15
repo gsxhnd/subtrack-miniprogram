@@ -2,6 +2,7 @@ import { eventBus, EVENTS } from '../../store/event-bus'
 import { calculateMonthlyAmount, getDaysUntilBilling } from '../../utils/billing'
 import { convertCurrency, type Currency } from '../../utils/currency'
 import { CURRENCY_NAMES, CURRENCY_SYMBOLS } from '../../models'
+import { getIconAsync } from '../../utils/icons'
 
 type SortType = 'date' | 'amount' | 'name'
 type SortOrder = 'asc' | 'desc'
@@ -19,10 +20,17 @@ interface SubscriptionData {
     filterCategory: string | 'all'
     categories: string[]
     currencyOptions: Array<{ value: string; label: string }>
+    // Icons
+    iconSort: string
+    iconFilter: string
+    iconChevronDown: string
+    iconClose: string
+    iconArrowUp: string
+    iconArrowDown: string
 }
 
 Page<SubscriptionData, WechatMiniprogram.Page.CustomOption>({
-    data: {
+        data: {
         subscriptions: [],
         activeSubscriptions: [],
         cancelledSubscriptions: [],
@@ -35,12 +43,33 @@ Page<SubscriptionData, WechatMiniprogram.Page.CustomOption>({
         filterCategory: 'all',
         categories: [],
         currencyOptions: [],
+        iconSort: '',
+        iconFilter: '',
+        iconChevronDown: '',
+        iconClose: '',
+        iconArrowUp: '',
+        iconArrowDown: '',
     },
 
     onLoad() {
         this.refreshData()
         eventBus.on(EVENTS.SUBSCRIPTION_CHANGED, this.refreshData.bind(this))
         this.initCurrencyOptions()
+        this.initIcons()
+    },
+
+    async initIcons() {
+        const color = '#64748b'
+        const [iconSort, iconFilter, iconChevronDown, iconClose, iconArrowUp, iconArrowDown] =
+            await Promise.all([
+                getIconAsync('arrowUpDown', { color, size: 20 }),
+                getIconAsync('listFilter', { color, size: 20 }),
+                getIconAsync('chevronDown', { color: '#94a3b8', size: 16 }),
+                getIconAsync('x', { color: '#94a3b8', size: 22 }),
+                getIconAsync('arrowUp', { color: '#3b82f6', size: 18 }),
+                getIconAsync('arrowDown', { color: '#3b82f6', size: 18 }),
+            ])
+        this.setData({ iconSort, iconFilter, iconChevronDown, iconClose, iconArrowUp, iconArrowDown })
     },
 
     onUnload() {
@@ -205,11 +234,11 @@ Page<SubscriptionData, WechatMiniprogram.Page.CustomOption>({
 
     goToDetail(e: any) {
         const { id } = e.detail
-        wx.navigateTo({ url: `/packageSubscription/pages/detail/index?id=${id}` })
+        wx.navigateTo({ url: `/pages/subscription/detail/index?id=${id}` })
     },
 
     goToEdit(e: any) {
         const { id } = e.detail
-        wx.navigateTo({ url: `/packageSubscription/pages/edit/index?id=${id}` })
+        wx.navigateTo({ url: `/pages/subscription/edit/index?id=${id}` })
     },
 })

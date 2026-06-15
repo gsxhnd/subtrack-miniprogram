@@ -25,7 +25,7 @@ Component({
         subscription: function (sub: any) {
             if (!sub || !sub.name) return
 
-            const currencySymbols: Record<string, string> = {
+            var currencySymbols: Record<string, string> = {
                 CNY: '¥',
                 USD: '$',
                 EUR: '€',
@@ -35,47 +35,48 @@ Component({
                 TWD: 'NT$',
             }
 
-            const cycleNames: Record<string, string> = {
+            var cycleNames: Record<string, string> = {
                 monthly: '每月',
                 quarterly: '每季度',
                 yearly: '每年',
             }
 
-            const amount = sub.amount / 100
-            const symbol = currencySymbols[sub.currency] || '¥'
-            const amountDisplay = `${symbol}${amount.toFixed(2)}`
-            const cycleDisplay = cycleNames[sub.billingRule?.cycle] || '每月'
+            var amount = sub.amount / 100
+            var symbol = currencySymbols[sub.currency] || '¥'
+            var amountDisplay = symbol + amount.toFixed(2)
+            var billingRule = sub.billingRule || {}
+            var cycleDisplay = cycleNames[billingRule.cycle] || '每月'
 
             // 计算距离下次扣款的天数
-            const now = new Date()
-            const nextDate = new Date(sub.nextBillingDate)
-            const diff = nextDate.getTime() - now.getTime()
-            const daysUntil = Math.ceil(diff / (1000 * 60 * 60 * 24))
+            var now = new Date()
+            var nextDate = new Date(sub.nextBillingDate)
+            var diff = nextDate.getTime() - now.getTime()
+            var daysUntil = Math.ceil(diff / (1000 * 60 * 60 * 24))
 
-            let nextBillingDisplay = ''
+            var nextBillingDisplay = ''
             if (daysUntil <= 0) {
                 nextBillingDisplay = '今天扣款'
             } else if (daysUntil === 1) {
                 nextBillingDisplay = '明天扣款'
             } else if (daysUntil <= 7) {
-                nextBillingDisplay = `${daysUntil}天后扣款`
+                nextBillingDisplay = daysUntil + '天后扣款'
             } else {
                 nextBillingDisplay = sub.nextBillingDate
             }
 
-            const statusDisplay = sub.status === 'cancelled' ? '已取消' : ''
-            const categoryDisplay = sub.category || ''
-            const hasCategory = !!sub.category
+            var statusDisplay = sub.status === 'cancelled' ? '已取消' : ''
+            var categoryDisplay = sub.category || ''
+            var hasCategory = !!sub.category
 
             this.setData({
                 currencySymbol: symbol,
-                amountDisplay,
-                cycleDisplay,
-                daysUntil,
-                nextBillingDisplay,
-                statusDisplay,
-                categoryDisplay,
-                hasCategory,
+                amountDisplay: amountDisplay,
+                cycleDisplay: cycleDisplay,
+                daysUntil: daysUntil,
+                nextBillingDisplay: nextBillingDisplay,
+                statusDisplay: statusDisplay,
+                categoryDisplay: categoryDisplay,
+                hasCategory: hasCategory,
             })
         },
     },

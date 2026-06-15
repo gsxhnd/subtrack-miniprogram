@@ -22,15 +22,15 @@
   <!-- 排序和筛选工具栏 -->
   <view wx:if="{{currentTab === 'active'}}" class="toolbar">
     <view class="toolbar__btn" bindtap="showSortOptions">
-      <text class="toolbar__icon">⇅</text>
+      <image class="toolbar__icon" src="{{iconSort}}" mode="aspectFit" />
       <text class="toolbar__text">{{sortType === 'date' ? '按日期' : sortType === 'amount' ? '按金额' : '按名称'}}</text>
-      <text class="toolbar__arrow">▼</text>
+      <image class="toolbar__arrow" src="{{iconChevronDown}}" mode="aspectFit" />
     </view>
     <view class="toolbar__btn" bindtap="showFilterOptions">
-      <text class="toolbar__icon">◉</text>
+      <image class="toolbar__icon" src="{{iconFilter}}" mode="aspectFit" />
       <text class="toolbar__text">筛选</text>
-      <text wx:if="{{filterCurrency !== 'all' || filterCategory !== 'all'}}" class="toolbar__badge">•</text>
-      <text class="toolbar__arrow">▼</text>
+      <view wx:if="{{filterCurrency !== 'all' || filterCategory !== 'all'}}" class="toolbar__badge"></view>
+      <image class="toolbar__arrow" src="{{iconChevronDown}}" mode="aspectFit" />
     </view>
   </view>
 
@@ -67,7 +67,7 @@
     <view class="picker picker--bottom" catchtap="">
       <view class="picker__header">
         <text class="picker__title">排序方式</text>
-        <view class="picker__close" bindtap="closeSortPicker">✕</view>
+        <image class="picker__close" src="{{iconClose}}" mode="aspectFit" bindtap="closeSortPicker" />
       </view>
       <view class="picker__list">
         <view
@@ -76,7 +76,7 @@
           bindtap="onSortTypeChange"
         >
           <text class="picker__item-label">按扣款日期</text>
-          <text wx:if="{{sortType === 'date'}}" class="picker__item-order">{{sortOrder === 'asc' ? '↑' : '↓'}}</text>
+          <image wx:if="{{sortType === 'date'}}" class="picker__item-order" src="{{sortOrder === 'asc' ? iconArrowUp : iconArrowDown}}" mode="aspectFit" />
         </view>
         <view
           class="picker__item {{sortType === 'amount' ? 'picker__item--active' : ''}}"
@@ -84,7 +84,7 @@
           bindtap="onSortTypeChange"
         >
           <text class="picker__item-label">按金额</text>
-          <text wx:if="{{sortType === 'amount'}}" class="picker__item-order">{{sortOrder === 'asc' ? '↑' : '↓'}}</text>
+          <image wx:if="{{sortType === 'amount'}}" class="picker__item-order" src="{{sortOrder === 'asc' ? iconArrowUp : iconArrowDown}}" mode="aspectFit" />
         </view>
         <view
           class="picker__item {{sortType === 'name' ? 'picker__item--active' : ''}}"
@@ -92,7 +92,7 @@
           bindtap="onSortTypeChange"
         >
           <text class="picker__item-label">按名称</text>
-          <text wx:if="{{sortType === 'name'}}" class="picker__item-order">{{sortOrder === 'asc' ? '↑' : '↓'}}</text>
+          <image wx:if="{{sortType === 'name'}}" class="picker__item-order" src="{{sortOrder === 'asc' ? iconArrowUp : iconArrowDown}}" mode="aspectFit" />
         </view>
       </view>
     </view>
@@ -103,7 +103,7 @@
     <view class="picker picker--bottom" catchtap="">
       <view class="picker__header">
         <text class="picker__title">筛选</text>
-        <view class="picker__close" bindtap="closeFilterPicker">✕</view>
+        <image class="picker__close" src="{{iconClose}}" mode="aspectFit" bindtap="closeFilterPicker" />
       </view>
 
       <!-- 货币筛选 -->

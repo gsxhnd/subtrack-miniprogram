@@ -1,59 +1,120 @@
+$hump-h: 64rpx;     /* 凸起区域高度 */
+$tabs-h: 100rpx;    /* tab 项高度 */
+$fab-size: 100rpx;
+$total-h: $hump-h + $tabs-h;
+
 .tab-bar {
-    display: flex;
-    align-items: flex-end;
-    height: 110rpx;
-    padding-bottom: env(safe-area-inset-bottom);
-    background: #ffffff;
-    box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+  position: relative;
+  width: 100%;
+  height: $total-h + env(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 离屏 canvas */
+.tab-bar__offscreen {
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  width: 100vw;
+  height: $total-h;
+}
+
+/* 曲线背景图 */
+.tab-bar__bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: $total-h;
+  z-index: 0;
+}
+
+/* 兜底背景 */
+.tab-bar__bg-fallback {
+  position: absolute;
+  left: 0;
+  top: $hump-h;
+  width: 100%;
+  height: $tabs-h;
+  background: #ffffff;
+  z-index: 0;
+}
+
+/* 中间 + 按钮：定位在凸起顶部 */
+.tab-bar__fab {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: $fab-size;
+  height: $fab-size;
+  border-radius: 50%;
+  background: #155eef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 8rpx 24rpx rgba(21, 94, 239, 0.25);
+
+  &:active {
+    transform: translateX(-50%) scale(0.92);
+    opacity: 0.85;
+  }
+}
+
+.tab-bar__fab-icon {
+  font-size: 50rpx;
+  color: #ffffff;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* Tab 项：定位在凸起下方的平直区 */
+.tab-bar__tabs {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: $hump-h;
+  height: $tabs-h;
+  z-index: 5;
+  display: flex;
+  align-items: center;
 }
 
 .tab-bar__item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding-top: 10rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  /* 中间留空给凸起按钮 */
+  &:nth-child(2) {
+    margin-right: $fab-size / 2;
+  }
+  &:nth-child(3) {
+    margin-left: $fab-size / 2;
+  }
+
+  &:active {
+    opacity: 0.6;
+  }
 }
 
 .tab-bar__icon {
-    width: 48rpx;
-    height: 48rpx;
-    margin-bottom: 6rpx;
+  width: 44rpx;
+  height: 44rpx;
+  margin-bottom: 4rpx;
 }
 
-.tab-bar__label {
-    font-size: 20rpx;
-    line-height: 1;
+.tab-bar__text {
+  font-size: 20rpx;
+  color: #94a3b8;
+  line-height: 1.4;
 }
 
-.tab-bar__add {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    height: 100%;
-}
-
-.tab-bar__add-btn {
-    width: 112rpx;
-    height: 112rpx;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #155eef 0%, #1d4ed8 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translateY(-20rpx);
-    box-shadow: 0 8rpx 32rpx rgba(21, 94, 239, 0.35);
-    transition: transform 0.15s ease;
-}
-
-.tab-bar__add-btn--active {
-    transform: translateY(-20rpx) scale(0.9);
-}
-
-.tab-bar__add-icon {
-    font-size: 52rpx;
-    color: #ffffff;
-    font-weight: 300;
+.tab-bar__item.is-active .tab-bar__text {
+  color: #155eef;
+  font-weight: 600;
 }

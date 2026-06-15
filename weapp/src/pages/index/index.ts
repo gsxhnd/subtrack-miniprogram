@@ -1,6 +1,7 @@
 import { eventBus, EVENTS } from '../../store/event-bus'
 import { calculateMonthlyAmount, calculateYearlyAmount } from '../../utils/billing'
 import { convertCurrency, formatAmount } from '../../utils/currency'
+import { getIconAsync } from '../../utils/icons'
 
 interface IndexData {
   monthlySpending: number
@@ -15,6 +16,7 @@ interface IndexData {
   yearlySpendingDisplay: string
   monthlySpendingDisplay: string
   currencySymbol: string
+  iconEmptyState: string
 }
 
 Page<IndexData, WechatMiniprogram.Page.CustomOption>({
@@ -31,12 +33,16 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
     yearlySpendingDisplay: '0.00',
     monthlySpendingDisplay: '0.00',
     currencySymbol: '¥',
+    iconEmptyState: '',
   },
 
   onLoad() {
     this.refreshData()
     eventBus.on(EVENTS.SUBSCRIPTION_CHANGED, this.refreshData.bind(this))
     eventBus.on(EVENTS.SETTINGS_CHANGED, this.refreshData.bind(this))
+    getIconAsync('chartColumnIncreasing', { color: '#94a3b8', size: 80 }).then((uri) => {
+      this.setData({ iconEmptyState: uri })
+    })
   },
 
   onUnload() {
@@ -132,7 +138,7 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
   },
 
   goToBudgetSettings() {
-    wx.navigateTo({ url: '/packageSettings/pages/budget/index' })
+    wx.navigateTo({ url: '/pages/settings/budget/index' })
   },
 
   goToSubscriptionList() {
@@ -141,7 +147,7 @@ Page<IndexData, WechatMiniprogram.Page.CustomOption>({
 
   goToSubscriptionDetail(e: any) {
     const { id } = e.currentTarget.dataset
-    wx.navigateTo({ url: `/packageSubscription/pages/detail/index?id=${id}` })
+    wx.navigateTo({ url: `/pages/subscription/detail/index?id=${id}` })
   },
 
   goToStatistics() {

@@ -18,6 +18,7 @@ import { eventBus, EVENTS } from '../../store/event-bus'
 import { calculateMonthlyAmount, calculateYearlyAmount, getMonthlySpendingByYear } from '../../utils/billing'
 import { convertCurrency, type Currency } from '../../utils/currency'
 import { CURRENCY_SYMBOLS } from '../../models'
+import { getIconAsync } from '../../utils/icons'
 
 // 注册 Chart.js 组件
 Chart.register(
@@ -71,6 +72,7 @@ interface StatisticsData {
     currencyData: Array<{ currency: Currency; monthly: number; yearly: number; count: number; monthlyDisplay: string; yearlyDisplay: string }>
     currentYear: number
     selectedTab: 'category' | 'currency' | 'trend'
+    iconEmptyState: string
 }
 
 // 用 Page 外部变量存储 Chart 实例（避免 setData 序列化问题）
@@ -90,12 +92,16 @@ Page<StatisticsData, WechatMiniprogram.Page.CustomOption>({
         currencyData: [],
         currentYear: new Date().getFullYear(),
         selectedTab: 'category',
+        iconEmptyState: '',
     },
 
     onLoad() {
         this.refreshData()
         eventBus.on(EVENTS.SUBSCRIPTION_CHANGED, this.refreshData.bind(this))
         eventBus.on(EVENTS.SETTINGS_CHANGED, this.refreshData.bind(this))
+        getIconAsync('chartColumnIncreasing', { color: '#94a3b8', size: 80 }).then((uri) => {
+            this.setData({ iconEmptyState: uri })
+        })
     },
 
     onUnload() {

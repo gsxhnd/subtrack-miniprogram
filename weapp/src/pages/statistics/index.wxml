@@ -103,7 +103,7 @@
 
   <!-- 空状态 -->
   <view wx:if="{{activeCount === 0}}" class="empty-state full">
-    <text class="empty-state__icon">📊</text>
+    <image class="empty-state__icon" src="{{iconEmptyState}}" mode="aspectFit" />
     <text class="empty-state__title">暂无统计数据</text>
     <text class="empty-state__desc">添加订阅后可查看统计分析</text>
   </view>

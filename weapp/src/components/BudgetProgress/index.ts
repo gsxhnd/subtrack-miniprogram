@@ -1,3 +1,5 @@
+import { getIconAsync } from '../../utils/icons'
+
 Component({
     properties: {
         spent: {
@@ -32,6 +34,19 @@ Component({
         warningMessage: '',
         showWarning: false,
         overAmount: '0.00',
+        iconWarning: '',
+        iconTip: '',
+    },
+
+    lifetimes: {
+        attached() {
+            Promise.all([
+                getIconAsync('triangleAlert', { color: '#dc2626', size: 18 }),
+                getIconAsync('lightbulb', { color: '#d97706', size: 18 }),
+            ]).then(([iconWarning, iconTip]) => {
+                this.setData({ iconWarning, iconTip })
+            })
+        },
     },
 
     observers: {
